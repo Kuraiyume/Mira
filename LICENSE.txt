@@ -1,0 +1,30 @@
+# END-USER LICENSE AGREEMENT FOR MIRA PASSWORD MANAGER
+
+IMPORTANT PLEASE READ THE TERMS AND CONDITIONS OF THIS LICENSE AGREEMENT CAREFULLY BEFORE CONTINUING WITH THIS PROGRAM INSTALL: 
+
+"Girasec Solution's End-User License Agreement" (EULA) is a legal agreement between you (either an individual or a single entity) and Girasec Solution for the Girasec Solution software product(s) identified above which may include associated software components, media, printed materials, and "online" or electronic documentation ("MIRA password manager"). By installing, copying, or otherwise using the SOFTWARE PRODUCT, you agree to be bound by the terms of this EULA. 
+
+1. **GRANT OF LICENSE**:
+ Girasec Solution grants you a non-exclusive, non-transferable license to use the SOFTWARE PRODUCT as outlined in the documentation.
+
+2. **DESCRIPTION OF OTHER RIGHTS AND LIMITATIONS**:
+ You may not reverse engineer, decompile, or disassemble the SOFTWARE PRODUCT, except and only to the extent that such activity is expressly permitted by applicable law notwithstanding this limitation.
+
+3. **COPYRIGHT**: 
+All title, including but not limited to copyrights, in and to the SOFTWARE PRODUCT and any copies thereof are owned by Girasec Solution or its suppliers. All title and intellectual property rights in and to the content which may be accessed through use of the SOFTWARE PRODUCT is the property of the respective content owner and may be protected by applicable copyright or other intellectual property laws and treaties.
+
+4. **NO WARRANTIES**:
+ Girasec Solution expressly disclaims any warranty for the SOFTWARE PRODUCT. The SOFTWARE PRODUCT is provided 'As Is' without any express or implied warranty of any kind.
+
+5. **LIMITATION OF LIABILITY**: 
+In no event shall Girasec Solution be liable for any damages due to use of the SOFTWARE PRODUCT.
+
+6. **TERMINATION**: 
+Without prejudice to any other rights, Girasec Solution may terminate this EULA if you fail to comply with the terms and conditions of this EULA. In such event, you must destroy all copies of the SOFTWARE PRODUCT in your possession.
+
+7. **UPDATES AND MAINTENANCE**:
+ Girasec Solution is not obligated to provide any updates or maintenance services for the SOFTWARE PRODUCT. Any such services provided by Girasec Solution shall be covered by this EULA.
+
+8. **COMPLIANCE WITH LAWS**: You must comply with all applicable laws regarding the use of the SOFTWARE PRODUCT.
+
+If you have any questions concerning this EULA, or if you desire to contact Girasec Solution for any reason, please contact Ivan Dizon, founder of Girasec Solution.
