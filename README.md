@@ -222,6 +222,5 @@ Mira is licensed under **GNU General Public License v3.0**
 
 ## Acknowledgements
 
-- GiraSec Solutions
 - veilwr4ith
 - icode3rror
