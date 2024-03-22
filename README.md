@@ -218,7 +218,7 @@ Once logged in, users can utilize various commands, including:
 
 ## License
 
-Mira is licensed under GNU.
+Mira is licensed under **GNU General Public License v3.0**
 
 ## Acknowledgements
 
