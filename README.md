@@ -62,9 +62,9 @@ MIRA supports various types of credentials, including:
 
 - **Private Notes**: MIRA enables users to securely store private information, such as personal notes, sensitive documents, or confidential data. By encrypting these notes and providing secure storage, MIRA helps users safeguard their privacy and sensitive information, ensuring that it remains inaccessible to unauthorized individuals or malicious actors.
 
-## Features (Few)
+## Features
 
-- **Comprehensive Credential Storage**: MIRA offers sophisticated storage capabilities, accommodating an extensive range of credentials. These include Platform Accounts, Credit/Debit Card PINs (exclusive to PREMIUM), API Keys (exclusive to PREMIUM), SSH(RSA) Keys (exclusive to PREMIUM), Source Codes (exclusive to PREMIUM), and Private Notes (exclusive to PREMIUM). This breadth of storage options ensures MIRA's flexibility in securely managing diverse types of credentials for users.
+- **Comprehensive Credential Storage**: MIRA offers sophisticated storage capabilities, accommodating an extensive range of credentials. These include Platform Accounts, Credit/Debit Card PINs, API Keys, SSH(RSA) Keys, Source Codes, and Private Notes. This breadth of storage options ensures MIRA's flexibility in securely managing diverse types of credentials for users.
 
 - **Multi-Factor Authentication**: Before the user can go to the main menu of MIRA, the user needs to login first. In login prompt, the user needs to enter the master password and the encryption key that has been generated after successful registration and a time-based 6-digit from 2FA if enabled.
 
@@ -97,83 +97,38 @@ MIRA supports various types of credentials, including:
 - [ ] Tested on macOS
 - [x] Tested on Linux
 
-## Installation (SSH Method with Git)
-_*Users are required to have a GitHub account to set up SSH._
+## Installation
 ## Unix-Based Systems
-To install Mira via SSH using Git:
-
-1. **Generate SSH Key on your Terminal**:
+1. **Clone Repository**: Use Git to clone the Mira repository onto your system:
    ```bash
-   ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+   git clone https://github.com/veilwr4ith/MIRA
    ```
 
-2. **Navigate to SSH Directory**:
-   ```bash
-   cd .ssh
-   ```
-
-3. **Cat the Public Key which is the id_rsa.pub and Copy its content**:
-   ```bash
-   cat id_rsa.pub
-   ```
-
-4. **Paste it on your Github Account**:
-   ```bash
-   Settings>SSH and GPG Keys>Add New SSH Key
-   ```
-
-5. **Clone Repository**: Use Git to clone the Mira repository onto your system:
-   ```bash
-   git clone git@github.com:GiraSec/MIRA.git   
-   ```
-
-6. **Navigate to Directory**: Move into the Mira directory:
+2. **Navigate to Directory**: Move into the Mira directory:
    ```bash
    cd MIRA
    ```
 
-7. **Make the installer executable**:
+3. **Make the installer executable**:
    ```bash
    chmod +x installer.sh
    ```
 
-8. **Run the installer**:
+4. **Run the installer**:
    ```bash
    sudo ./installer.sh
    ```
-
-9. **Follow Instructions**: Follow the on-screen instructions provided by the installer to complete the installation process.
-
-
-10. **Verify Installation**: After installation, verify that Mira is successfully installed by running the program:
+   
+5. **Verify Installation**: After installation, verify that Mira is successfully installed by running the program:
     ```bash
     sudo MIRA
     ```
-## Windows via SSH also
-1. **Download and install python [here](https://www.python.org)**
+    
+## Windows 
 
-2. **Download and install git [here](https://git-scm.com/downloads)**
-
-3. **Navigate to the Desired Directory**: You can navigate to the directory where you want to store your SSH keys using the cd command. For example, to navigate to your user directory, you can use:
+1. **Clone the repository of MIRA (If Git is Installed)**:
    ```bash
-   cd %userprofile%
-   ```
-
-4. **Generate SSH Key**:
-   ```bash
-   ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-   ```
-
-5. **Open the id_rsa.pub and copy its content**
-
-6. **Paste the content on your Github Account**:
-   ```bash
-   Settings>SSH and GPG Keys>Add New SSH Key
-   ```
-
-7. **Clone the repository of MIRA**:
-   ```bash
-   git clone git@github.com:GiraSec/MIRA.git
+   git clone https://github.com/veilwr4ith/MIRA
    ```
 
 8. **Install Libraries**:
@@ -263,7 +218,7 @@ Once logged in, users can utilize various commands, including:
 
 ## License
 
-Mira is licensed under EULA (END USER LICENSE AGREEMENT).
+Mira is licensed under GNU.
 
 ## Acknowledgements
 
