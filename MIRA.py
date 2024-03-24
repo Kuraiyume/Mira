@@ -3,9 +3,9 @@ about = """
 Author: Fredmark Ivan D. Dizon && John Russel L. Escote
 GitHub: https://github.com/veilwr4ith && https://github.com/icode3rror
 
-Project: MIRA - GiraSec Solutions's CLI Password Manager (PREMIUM)
+Project: MIRA - GiraSec Solutions's CLI Password Manager
 GitHub Repository: https://github.com/GiraSec/MIRA
-License: End User License Agreement (EULA)
+License: GNU GENERAL PUBLIC LICENSE
 
 Version: 2.1.23
 Release Date: 2024-03-12
@@ -325,7 +325,7 @@ class PasswordManager:
                     phrases = [input(colored(f"[*] Enter phrase {i + 1}: ", "yellow")) for i in range(num_phrases)]
                     password = self.generate_multi_phrase_password(phrases)
                 elif choice == '5':
-                    pattern = input(colored("[*] Enter the password pattern: ", "yellow"))
+                    pattern = input(colored("[*] u = uppercase, l = lowercase, d = digits, s = symbols, u = letter/digits\n[*] Enter the password pattern: ", "yellow"))
                     if not pattern:
                         pattern = 'ulsudauullddaassuldsa'
                         print(colored(f"[**] No pattern provided!! (default: {pattern})", "magenta"))
@@ -466,10 +466,10 @@ class PasswordManager:
         return Fernet(key)
     def check_master_password_strength(self, password):
         policy = PasswordPolicy.from_names(
-            length=20,
-            uppercase=3,
-            numbers=3,
-            special=4,
+            length=15,
+            uppercase=1,
+            numbers=1,
+            special=3,
         )
         result = policy.test(password)
         if result:
