@@ -1678,7 +1678,7 @@ class PasswordManager:
 - Enable Two-Factor Authentication for an additional layer of security.
 - Mira operates on a Zero-Knowledge basis, which means that the security of your account relies solely on the strength and secrecy of your master password, without any involvement from the service provider. So, it's essential not to compromise your account's security with careless actions. Don't be a bitch!
 
-[**] Note: Master Password strength policy requires at least 20 characters with uppercase, numbers, and special characters. (Mandatory).
+[**] Note: Master Password strength policy requires at least 15 characters with uppercase, numbers, and special characters. (Mandatory).
 [**] Note: Password strength policy for platforms requires at least 10 characters with uppercase, numbers, and special characters also. (Optional, but we recommend you to follow our password policy.) """, "cyan"))
             elif choice == 'exit':
                 print(colored("[*] MIRA Terminated!", "red"))
