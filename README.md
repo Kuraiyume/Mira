@@ -213,7 +213,7 @@ Once logged in, users can utilize various commands, including:
 
 ## Note
 
-- Master Password strength policy requires at least 20 characters with uppercase, numbers, and special characters. (Mandatory).
+- Master Password strength policy requires at least 15 characters with uppercase, numbers, and special characters. (Mandatory).
 - Password strength policy for platforms requires at least 10 characters with uppercase, numbers, and special characters also. (Optional, but we recommend you to follow our password policy.)
 
 ## License
