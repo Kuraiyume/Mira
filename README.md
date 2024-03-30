@@ -82,10 +82,12 @@ MIRA supports various types of credentials, including:
 
 - **Password Expiry Lister**: Allows users to view the remaining time until a password expires, facilitating proactive password management.
 
-- **Accessible Instructions**: GiraSec prioritized creating intuitive guidance for MIRA, a Terminal-Based Password Manager, ensuring it offers the utmost user-friendliness.
+- **Accessible Instructions**: Prioritized creating intuitive guidance for MIRA, a Terminal-Based Password Manager, ensuring it offers the utmost user-friendliness.
 
-- **Enhanced User Data Encryption**: GiraSec worked hard to make your password vault more secure by adding more complex encryptions in your main user in MIRA.
+- **Enhanced User Data Encryption**: Worked hard to make your password vault more secure by adding more complex encryptions in your main user in MIRA.
 
+- **Loggings Tracker**: Mira can track login attempts, with the time logged and the status if the logging is successful or not.
+  
 - **Reset Functionality**: In the Premium Version, MIRA offers a reset option designed to provide users with a comprehensive tool for data management. By selecting this option, users can initiate a process that deletes all saved credentials, including their primary MIRA account. This feature serves as a safeguard, enabling users to reset their MIRA instance in situations such as compromised accounts or a need for a fresh start.
 
 *Please note: Resetting MIRA will permanently delete all stored credentials, and this action cannot be undone. Exercise caution and ensure that you have backed up any essential data before proceeding with the reset. MIRA will not be able to recover any deleted credentials after the reset is complete.*
