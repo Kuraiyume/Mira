@@ -3,9 +3,9 @@ about = """
 Author: Fredmark Ivan D. Dizon && John Russel L. Escote
 GitHub: https://github.com/veilwr4ith && https://github.com/icode3rror
 
-Project: MIRA - GiraSec Solutions's CLI Password Manager
+Project: MIRA - GiraSec Solutions's CLI Password Manager (PREMIUM)
 GitHub Repository: https://github.com/GiraSec/MIRA
-License: GNU GENERAL PUBLIC LICENSE
+License: General Public License
 
 Version: 2.1.23
 Release Date: 2024-03-12
@@ -113,6 +113,7 @@ import string
 import random
 import json
 import platform
+import logging
 import sys
 import paramiko
 import io
@@ -172,37 +173,41 @@ def get_current_datetime():
     date_str = current_datetime.strftime("%Y-%m-%d")
     time_str = current_datetime.strftime("%H:%M:%S")
     return f"Current Time: {time_str}\nDate: {date_str}"
+if os.name == "posix":
+    LOCKOUT_FILE = os.environ.get('LOCKOUT_FILE', '/etc/.lockout')
+    USER_DATA_FILE = os.environ.get('USER_DATA_FILE', '/etc/.user')
+    PASSFILE = os.environ.get('PASSFILE', '/etc/.pass')
+    API = os.environ.get('API', '/etc/.api')
+    CARD_PIN_FILE = os.environ.get('CARD_PIN_FILE', '/etc/.card')
+    SSH = os.environ.get('SSH', '/etc/.ssh')
+    PRIVNOTE = os.environ.get('PRIVNOTE', '/etc/.privnote')
+    SRCCODE = os.environ.get('SRCCODE', '/etc/.srccode')
+    LOGS = os.environ.get('LOGS', '/etc/.loggings')
+elif os.name == "nt":
+    program_files_dir = os.environ.get('ProgramFiles', 'C:\\Program Files')
+    app_folder_name = 'Mira'
+    app_folder_path = os.path.join(program_files_dir, app_folder_name)
+    os.makedirs(app_folder_path, exist_ok=True)
+    LOCKOUT_FILE = os.path.join(app_folder_path, 'lockout')
+    USER_DATA_FILE = os.path.join(app_folder_path, 'user_data')
+    PASSFILE = os.path.join(app_folder_path, 'pass')
+    API = os.path.join(app_folder_path, 'api')
+    CARD_PIN_FILE = os.path.join(app_folder_path, 'card')
+    SSH = os.path.join(app_folder_path, 'ssh')
+    PRIVNOTE = os.path.join(app_folder_path, 'notes')
+    SRCCODE = os.path.join(app_folder_path, 'srccode')
+    LOGS = os.path.join(app_folder_path, 'loggings')
 class PasswordManager:
     MAX_LOGIN_ATTEMPTS = 4 
     LOCKOUT_DURATION_SECONDS = 300
-    if os.name == "posix":
-        LOCKOUT_FILE = os.environ.get('LOCKOUT_FILE', '/etc/.lockout')
-        USER_DATA_FILE = os.environ.get('USER_DATA_FILE', '/etc/.user')
-        PASSFILE = os.environ.get('PASSFILE', '/etc/.pass')
-        API = os.environ.get('API', '/etc/.api')
-        CARD_PIN_FILE = os.environ.get('CARD_PIN_FILE', '/etc/.card')
-        SSH = os.environ.get('SSH', '/etc/.ssh')
-        PRIVNOTE = os.environ.get('PRIVNOTE', '/etc/.privnote')
-        SRCCODE = os.environ.get('SRCCODE', '/etc/.srccode')
-    elif os.name == "nt":
-        program_files_dir = os.environ.get('ProgramFiles', 'C:\\Program Files')
-        app_folder_name = 'Mira'
-        app_folder_path = os.path.join(program_files_dir, app_folder_name)
-        os.makedirs(app_folder_path, exist_ok=True)
-        LOCKOUT_FILE = os.path.join(app_folder_path, 'lockout')
-        USER_DATA_FILE = os.path.join(app_folder_path, 'user_data')
-        PASSFILE = os.path.join(app_folder_path, 'pass')
-        API = os.path.join(app_folder_path, 'api')
-        CARD_PIN_FILE = os.path.join(app_folder_path, 'card')
-        SSH = os.path.join(app_folder_path, 'ssh')
-        PRIVNOTE = os.path.join(app_folder_path, 'notes')
-        SRCCODE = os.path.join(app_folder_path, 'srccode')
     def __init__(self):
         self.history = InMemoryHistory()
         self.session = PromptSession(history=self.history, auto_suggest=AutoSuggestFromHistory())
         self.master_password = None
         self.cipher = None
         self.ph = PasswordHasher()
+        self.logger = logging.getLogger(__name__)
+        logging.basicConfig(filename=LOGS, level=logging.INFO, format='%(message)s')
         expiry_thread = Thread(target=self.notify_expiry_background)
         pin_expiry_thread = Thread(target=self.notify_pin_expiry_background)
         pin_expiry_thread.daemon = True
@@ -254,11 +259,11 @@ class PasswordManager:
     def save_lockout_time(self):
         if self.lockout_time:
             lockout_data = {'lockout_time': self.lockout_time}
-            with open(self.LOCKOUT_FILE, 'w') as lockout_file:
+            with open(LOCKOUT_FILE, 'w') as lockout_file:
                 json.dump(lockout_data, lockout_file)
     def load_lockout_time(self):
         try:
-            with open(self.LOCKOUT_FILE, 'r') as lockout_file:
+            with open(LOCKOUT_FILE, 'r') as lockout_file:
                 lockout_data = json.load(lockout_file)
                 self.lockout_time = lockout_data.get('lockout_time')
         except (FileNotFoundError, json.JSONDecodeError):
@@ -325,7 +330,7 @@ class PasswordManager:
                     phrases = [input(colored(f"[*] Enter phrase {i + 1}: ", "yellow")) for i in range(num_phrases)]
                     password = self.generate_multi_phrase_password(phrases)
                 elif choice == '5':
-                    pattern = input(colored("[*] u = uppercase, l = lowercase, d = digits, s = symbols, u = letter/digits\n[*] Enter the password pattern: ", "yellow"))
+                    pattern = input(colored("[*] Enter the password pattern: ", "yellow"))
                     if not pattern:
                         pattern = 'ulsudauullddaassuldsa'
                         print(colored(f"[**] No pattern provided!! (default: {pattern})", "magenta"))
@@ -390,7 +395,7 @@ class PasswordManager:
         password = ''.join([random.choice(characters.get(char, char)) for char in pattern])
         return password
     def enable_2fa(self):
-        with open(self.USER_DATA_FILE, 'r') as file:
+        with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
         if user_data.get('2fa_enabled', False):
             print(colored("[-] 2FA is already enabled for this user.", "red"))
@@ -399,7 +404,7 @@ class PasswordManager:
         key = self.encrypt_information(self.totp_secret_key)
         user_data['2fa_enabled'] = True
         user_data['key'] = key
-        with open(self.USER_DATA_FILE, 'w') as file:
+        with open(USER_DATA_FILE, 'w') as file:
             json.dump(user_data, file)
         totp = TOTP(self.totp_secret_key)
         accusn = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
@@ -417,7 +422,7 @@ class PasswordManager:
             time.sleep(86400)
     def notify_expiry(self):
         try:
-            with open(self.PASSFILE, 'r') as file:
+            with open(PASSFILE, 'r') as file:
                 data = json.load(file)
             for entry in data:
                 if 'expiry_at' in entry and entry['expiry_at']:
@@ -443,7 +448,7 @@ class PasswordManager:
             time.sleep(86400)
     def notify_pin_expiry(self):
         try:
-            with open(self.CARD_PIN_FILE, 'r') as file:
+            with open(CARD_PIN_FILE, 'r') as file:
                 data = json.load(file)
             for entry in data:
                 if 'expiry_at' in entry and entry['expiry_at']:
@@ -469,7 +474,7 @@ class PasswordManager:
             length=15,
             uppercase=1,
             numbers=1,
-            special=3,
+            special=4,
         )
         result = policy.test(password)
         if result:
@@ -511,7 +516,7 @@ class PasswordManager:
     def register(self, username, master_password):
         if not self.check_master_password_strength(master_password):
             return
-        if os.path.exists(self.USER_DATA_FILE) and os.path.getsize(self.USER_DATA_FILE) != 0:
+        if os.path.exists(USER_DATA_FILE) and os.path.getsize(USER_DATA_FILE) != 0:
             print(colored("[-] Master user already exists!!", "red"))
         else:
             self.master_password = master_password
@@ -539,18 +544,35 @@ class PasswordManager:
                 '4017916987192': hashed_encryption_key,
                 '2104941992374': saltier_hex
             }
-            with open(self.USER_DATA_FILE, 'w') as file:
+            with open(USER_DATA_FILE, 'w') as file:
                 json.dump(user_data, file)
                 clear_terminal()
                 print(colored(wolf, "blue"))
                 print(colored("\n[+] Registration complete!!", "green"))
                 print(colored(f"[+] Encryption key: {encryption_key.decode()}", "green"))
                 print(colored("\n[*] Caution: Save your encryption key and store it somewhere safe Mira will never recover your encryption key once you forgot it!!! So please don't be stupid:)", "yellow"))
+    def log_login_attempt(self, login_status):
+        try:
+            with open(LOGS, 'r') as file:
+                data = json.load(file)
+        except (FileNotFoundError, json.JSONDecodeError):
+            data = []
+        log_entry = {
+            'time': time.strftime("%Y-%m-%d %H:%M:%S"),
+             'status': 'Success' if login_status else 'Failed'
+        }
+        data.append(log_entry)
+        with open(LOGS, 'w') as file:
+            json.dump(data, file, indent=4)
+        if login_status:
+            pass
+        else:
+            pass
     def login(self, username, entered_password, encryption_key):
-        if not os.path.exists(self.USER_DATA_FILE):
+        if not os.path.exists(USER_DATA_FILE):
             print(colored("\n[-] You have not registered. Do that first!", "red"))
             return
-        with open(self.USER_DATA_FILE, 'r') as file:
+        with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
         if self.lockout_time and time.time() < self.lockout_time:
             clear_terminal()
@@ -565,6 +587,7 @@ class PasswordManager:
                 raise VerifyMismatchError("Encryption key mismatch")
         except VerifyMismatchError:
             print(colored("[-] Invalid Login Credentials. Login Failed!", "red"))
+            self.log_login_attempt(False)
             if self.increment_failed_attempts():
                 return
             else:
@@ -581,11 +604,13 @@ class PasswordManager:
                 code = getpass.getpass(colored("[*] 6-DIgit Code (2FA): ", "yellow")) 
                 if not self.verify_2fa(key, code):
                     print(colored("[-] Invalid 2FA Code. Login Failed!", "red"))
+                    self.log_login_attempt(False)
                     if self.increment_failed_attempts():
                         return
                     else:
                         return
             print(colored("[+] Login Successful.. Please Wait....", "green"))
+            self.log_login_attempt(True)
             time.sleep(10)
             clear_terminal()
             print(colored(wolf, "blue"))
@@ -593,13 +618,46 @@ class PasswordManager:
             self.main_menu()
         except VerifyMismatchError:
             print(colored("[-] Invalid Login Credentials. Login Failed!", "red"))
+            self.log_login_attempt(False)
             if self.increment_failed_attempts():
                 return
             else:
                 return
+    def show_loggings(self):
+        try:
+            with open(LOGS, 'r') as file:
+                data = json.load(file)
+                if isinstance(data, list):
+                    key_status = []
+                    for entry in data:
+                        key_status.append({
+                            'time': entry['time'],
+                            'status': entry['status']
+                        })
+                elif isinstance(data, dict): 
+                    key_status = [{
+                        'time': data['time'],
+                        'status': data['status']
+                    }]
+                else:
+                    raise ValueError("Invalid JSON format")
+                if key_status:
+                    print(colored("[+] All Previous Logs:", "green"))
+                    print(colored("\nTime Logged".ljust(31) + "Status", "cyan"))
+                    print(colored("--------------------".ljust(30) + "---------------", "cyan"))
+                    for user_status in key_status:
+                        if user_status['status'] == "Success":
+                            status_color = 'green'
+                        else:
+                            status_color = 'red'
+                        print(f"{colored(str(user_status['time']).ljust(30), 'cyan')}{colored(str(user_status['status']), status_color)}")
+                else:
+                    print(colored("[-] No Logs has been found.", "red"))
+        except FileNotFoundError:
+            print(colored("[-] No Logs has been found.", "red"))
     def show_ssh_key(self):
         try:
-            with open(self.SSH, 'r') as file:
+            with open(SSH, 'r') as file:
                 data = json.load(file)
             key_id = input(colored("[*] Key ID: ", "yellow"))
             if key_id.isdigit():
@@ -635,7 +693,7 @@ class PasswordManager:
             print(colored("[-] No SSH Key saved. Show SSH Keys failed!", "red"))
     def show_src_code_status(self):
         try:
-            with open(self.SRCCODE, 'r') as file:
+            with open(SRCCODE, 'r') as file:
                 data = json.load(file)
             code_id = input(colored("[*] Code ID: ", "yellow"))
             if code_id.isdigit():
@@ -670,7 +728,7 @@ class PasswordManager:
             print(colored("[-] No Source Code saved. Show Source Code failed!", "red"))
     def show_api_key(self):
         try:
-            with open(self.API, 'r') as file:
+            with open(API, 'r') as file:
                 data = json.load(file)
             acc_id = input(colored("[*] Account ID: ", "yellow"))
             if acc_id.isdigit():
@@ -706,7 +764,7 @@ class PasswordManager:
             print(colored("[-] No API Key saved. Show API Key failed!", "red"))
     def show_priv_note_status(self):
         try:
-            with open(self.PRIVNOTE, 'r') as file:
+            with open(PRIVNOTE, 'r') as file:
                 data = json.load(file)
             note_id = input(colored("[*] Note ID: ", "yellow"))
             if note_id.isdigit():
@@ -741,7 +799,7 @@ class PasswordManager:
             print(colored("[-] No Private Notes saved. Show Private Notes failed!", "red"))
     def show_pin_expiry_status(self):
         try:
-            with open(self.CARD_PIN_FILE, 'r') as file:
+            with open(CARD_PIN_FILE, 'r') as file:
                 data = json.load(file)
             card_id = input(colored("[*] Card ID: ", "yellow"))
             if card_id.isdigit():
@@ -782,7 +840,7 @@ class PasswordManager:
             print(colored("[-] No PIN saved. Show expiry status failed!", "red"))
     def show_passwd_strength(self):
         try:
-            with open(self.PASSFILE, 'r') as file:
+            with open(PASSFILE, 'r') as file:
                 data = json.load(file)
             acc_id = input(colored("[*] Account ID: ", "yellow"))
             if acc_id.isdigit():
@@ -833,7 +891,7 @@ class PasswordManager:
             return colored("Weak", "red")
     def show_expiry_status(self):
         try:
-            with open(self.PASSFILE, 'r') as file:
+            with open(PASSFILE, 'r') as file:
                 data = json.load(file)
             acc_id = input(colored("[*] Account ID: ", "yellow"))
             if acc_id.isdigit():
@@ -924,7 +982,7 @@ class PasswordManager:
                     continue
                 decrypted_password = self.get_password(acc_id)
                 try:
-                    with open(self.PASSFILE, 'r') as file:
+                    with open(PASSFILE, 'r') as file:
                         data = json.load(file)
                     if acc_id not in [entry['account_id'] for entry in data]:
                         print(colored(f"[-] This ID {acc_id} doesn't exist", "red"))
@@ -949,7 +1007,7 @@ class PasswordManager:
                                         continue
                                     entry['password'] = self.encrypt_password(new_password)
                                     entry['expiry_at'] = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S')
-                                    with open(self.PASSFILE, 'w') as file:
+                                    with open(PASSFILE, 'w') as file:
                                         json.dump(data, file, indent=4)
                                     decrypted_password = self.decrypt_password(entry['password'])
                                     if decrypted_password:
@@ -1037,7 +1095,7 @@ class PasswordManager:
                     except ValueError:
                         print(colored("[-] Invalid Note ID", "red"))
                         continue
-                    with open(self.PRIVNOTE, 'r') as file:
+                    with open(PRIVNOTE, 'r') as file:
                         data = json.load(file)
                     decrypted_note = self.get_private_note(note_id)
                     key_found = False
@@ -1069,7 +1127,7 @@ class PasswordManager:
                     print(colored("[-] Invalid Note ID", "red"))
                     return
                 try:
-                    with open(self.PRIVNOTE, 'r') as file:
+                    with open(PRIVNOTE, 'r') as file:
                         data = json.load(file)
                 except FileNotFoundError:
                     print(colored("[-] Private Note not found. QUITTING!", "red"))
@@ -1098,7 +1156,7 @@ class PasswordManager:
                     continue
                 new_content = '\n'.join(additional_content[:-1])
                 data[index]['note'] = self.encrypt_information(new_content)
-                with open(self.PRIVNOTE, 'w') as file:
+                with open(PRIVNOTE, 'w') as file:
                     json.dump(data, file, indent=4)
                 print(colored("[+] New content added to the Private Note successfully!", "green"))
             elif choice == 'add_src_code':
@@ -1128,7 +1186,7 @@ class PasswordManager:
                     except ValueError:
                         print(colored("[-] Invalid Code ID", "red"))
                         continue
-                    with open(self.SRCCODE, 'r') as file:
+                    with open(SRCCODE, 'r') as file:
                         data = json.load(file)
                     decrypted_code = self.get_source_code(code_id)
                     key_found = False
@@ -1161,7 +1219,7 @@ class PasswordManager:
                     return
                 updated_source_code = []
                 try:
-                    with open(self.SRCCODE, 'r') as file:
+                    with open(SRCCODE, 'r') as file:
                         data = json.load(file)
                 except FileNotFoundError:
                     print(colored("[-] Source Code not found. QUITTING!", "red"))
@@ -1186,14 +1244,14 @@ class PasswordManager:
                     continue
                 source_code = '\n'.join(updated_source_code[:-1])
                 try:
-                    with open(self.SRCCODE, 'r') as file:
+                    with open(SRCCODE, 'r') as file:
                         data = json.load(file)
                 except json.JSONDecodeError:
                     data = []
                 for entry in data:
                     if entry['code_id'] == code_id:                        
                         entry['code'] = self.encrypt_information(source_code)
-                        with open(self.SRCCODE, 'w') as file:           
+                        with open(SRCCODE, 'w') as file:           
                             json.dump(data, file, indent=4)               
                             decrypted_code = self.decrypt_information(entry['code'])
                         if decrypted_code:
@@ -1271,7 +1329,7 @@ class PasswordManager:
                     except ValueError:
                         print(colored("[-] Invalid Key ID", "red"))
                         continue
-                    with open(self.SSH, 'r') as file:
+                    with open(SSH, 'r') as file:
                         data = json.load(file)
                     key_found = False
                     for entry in data:
@@ -1338,7 +1396,7 @@ class PasswordManager:
                 self.notify_expiry()
                 self.notify_pin_expiry()
             elif choice == 'enable2fa':
-                with open(self.USER_DATA_FILE, 'r') as file:
+                with open(USER_DATA_FILE, 'r') as file:
                     user_data = json.load(file)
                 if user_data.get('2fa_enabled', False):
                     print(colored("[-] 2FA is already enabled for this user.", "red"))
@@ -1378,7 +1436,7 @@ class PasswordManager:
                 caution = input(colored("[*] Caution: After attempting to do reset, all of the data including your passwords and your master user in mira will be deleted permanently! Are you sure that you want to proceed? (y/N): ", "yellow"))
                 if caution == 'y':
                     master_password = getpass.getpass(colored("Master Password: ", "yellow"))
-                    with open(self.USER_DATA_FILE, 'r') as file:
+                    with open(USER_DATA_FILE, 'r') as file:
                         user_data = json.load(file)
                     stored_master_password = user_data['master_password']
                     salt = user_data['salt']
@@ -1387,31 +1445,35 @@ class PasswordManager:
                     except VerifyMismatchError:
                         print(colored("\n[-] Incorrect current master password. Reset procedure failed!", "red"))
                         continue
-                    if os.path.exists(self.LOCKOUT_FILE):
-                        os.remove(self.LOCKOUT_FILE)
+                    if os.path.exists(LOCKOUT_FILE):
+                        os.remove(LOCKOUT_FILE)
                     else:
                         pass
-                    if os.path.exists(self.PASSFILE):
-                        os.remove(self.PASSFILE)
+                    if os.path.exists(PASSFILE):
+                        os.remove(PASSFILE)
                     else:
                         pass
-                    if os.path.exists(self.CARD_PIN_FILE):
-                        os.remove(self.CARD_PIN_FILE)
+                    if os.path.exists(CARD_PIN_FILE):
+                        os.remove(CARD_PIN_FILE)
                     else:
                         pass
-                    if os.path.exists(self.API):
-                        os.remove(self.API)
+                    if os.path.exists(API):
+                        os.remove(API)
                     else:
                         pass
-                    if os.path.exists(self.PRIVNOTE):
-                        os.remove(self.PRIVNOTE)
+                    if os.path.exists(PRIVNOTE):
+                        os.remove(PRIVNOTE)
                     else:
                         pass
-                    if os.path.exists(self.SSH):
-                        os.remove(self.SSH)
+                    if os.path.exists(SSH):
+                        os.remove(SSH)
                     else:
                         pass
-                    os.remove(self.USER_DATA_FILE)
+                    if os.path.exists(LOGS):
+                        os.remove(LOGS)
+                    else:
+                        pass
+                    os.remove(USER_DATA_FILE)
                     print(colored("[+] All data has been successfully removed.", "green"))
                     start_again = input(colored("[*] Do you want to start a new account? (y/N): ", "yellow"))
                     if start_again == 'y':
@@ -1504,6 +1566,8 @@ class PasswordManager:
                 except ValueError:
                     print(colored("[-] No Account Number provided. QUTTING!", "red"))
                     continue
+            elif choice == 'show_loggings':
+                self.show_loggings()
             elif choice == 'get_api_key':
                 try:
                     acc_id = int(input(colored("[*] Account ID: ", "yellow")))
@@ -1512,7 +1576,7 @@ class PasswordManager:
                     continue
                 decrypted_key = self.get_key(acc_id)
                 try:
-                    with open(self.API, 'r') as file:
+                    with open(API, 'r') as file:
                         data = json.load(file)
                     for entry in data:
                         if decrypted_key is not None:
@@ -1532,7 +1596,7 @@ class PasswordManager:
                     continue
                 decrypted_pin = self.get_card_pin(card_id)
                 try:
-                    with open(self.CARD_PIN_FILE, 'r') as file:
+                    with open(CARD_PIN_FILE, 'r') as file:
                         data = json.load(file)
                     if card_id not in [entry['card_id'] for entry in data]:
                         print(colored(f"f[-] This card type {card_id} is not available in your vault.", "red"))
@@ -1553,7 +1617,7 @@ class PasswordManager:
                                             continue
                                         entry['pin'] = self.encrypt_information(new_pin)
                                         entry['expiry_at'] = (datetime.now() + timedelta(days=60)).strftime('%Y-%m-%d %H:%M:%S')
-                                        with open(self.CARD_PIN_FILE, 'w') as file:
+                                        with open(CARD_PIN_FILE, 'w') as file:
                                             json.dump(data, file, indent=4)
                                         decrypted_pin = self.decrypt_information(entry['pin'])
                                         if decrypted_pin:
@@ -1568,7 +1632,7 @@ class PasswordManager:
                                             continue
                                         elif caution == 'y':
                                             data = [e for e in data if not (e['card_id'] == card_id)]
-                                            with open(self.CARD_PIN_FILE, 'w') as file:
+                                            with open(CARD_PIN_FILE, 'w') as file:
                                                 json.dump(data, file, indent=4)
                                             print(colored("[+] Card details permanently deleted.", "green"))
                                         continue
@@ -1657,13 +1721,14 @@ class PasswordManager:
     'genpasswd' - Generate a strong password
     'changemaster' - Change the masterkey
 6. Listing and Analysis
-    'show_passwd_exp' - List all usernames and their status on a specific platform or all
-    'show_pin_exp' - List all card numbers and their status on a specific card type or all
-    'show_api_key' - List all available API Key with their Key ID, Platform, Key Name, and their date when they were added (No Expiry when it comes to API Keys)
-    'show_ssh_key' - List all available SSH Key with their Key ID, Username, Key Name and their date when they were added (No Expiry when it comes to SSH Keys)
-    'show_src_code' - List all available Source Code with their Code ID, File Name, and their date when they were added (No Expiry when it comes to Source Code)
-    'show_priv_note' - List all available Private Note with their note ID, Title, and when they were added (No Expiry when it comes to Private Notes)
+    'show_passwd_exp' - List the usernames and their status on a specific platform or all
+    'show_pin_exp' - List the card numbers and their status on a specific card type or all
+    'show_api_key' - List the available API Key with their Key ID, Platform, Key Name, and their date when they were added (No Expiry when it comes to API Keys)
+    'show_ssh_key' - List the available SSH Key with their Key ID, Username, Key Name and their date when they were added (No Expiry when it comes to SSH Keys)
+    'show_src_code' - List the available Source Code with their Code ID, File Name, and their date when they were added (No Expiry when it comes to Source Code)
+    'show_priv_note' - List the available Private Note with their note ID, Title, and when they were added (No Expiry when it comes to Private Notes)
     'show_passwd_strength' - List the strength of the password of a username on a specific platform
+    'show_loggings' - List all the previous logins.
 7. Securing Encryption Key
     'mnemonic_enc_key' - Convert the encryption key to a mnemonic phrase (Only applicable for encryption key that has no underscore and hyphen).
     'dec_mnemonic' - Decode a mnemonic phrase to the original encryption key
@@ -1678,7 +1743,7 @@ class PasswordManager:
 - Enable Two-Factor Authentication for an additional layer of security.
 - Mira operates on a Zero-Knowledge basis, which means that the security of your account relies solely on the strength and secrecy of your master password, without any involvement from the service provider. So, it's essential not to compromise your account's security with careless actions. Don't be a bitch!
 
-[**] Note: Master Password strength policy requires at least 15 characters with uppercase, numbers, and special characters. (Mandatory).
+[**] Note: Master Password strength policy requires at least 20 characters with uppercase, numbers, and special characters. (Mandatory).
 [**] Note: Password strength policy for platforms requires at least 10 characters with uppercase, numbers, and special characters also. (Optional, but we recommend you to follow our password policy.) """, "cyan"))
             elif choice == 'exit':
                 print(colored("[*] MIRA Terminated!", "red"))
@@ -1721,11 +1786,11 @@ class PasswordManager:
         except phonenumbers.phonenumberutil.NumberParseException:
             return False
     def add_password(self, website, email_address, username, password):
-        if not os.path.exists(self.PASSFILE):
+        if not os.path.exists(PASSFILE):
             data = []
         else:
             try:
-                with open(self.PASSFILE, 'r') as file:
+                with open(PASSFILE, 'r') as file:
                     data = json.load(file)
             except json.JSONDecodeError:
                 data = []
@@ -1765,16 +1830,16 @@ class PasswordManager:
 
             }
             data.append(password_entry)
-            with open(self.PASSFILE, 'w') as file:
+            with open(PASSFILE, 'w') as file:
                 json.dump(data, file, indent=4)
             print(colored(f"[+] Password added! Account ID for this account: {unique_id}", "green"))
         else:
             print(colored("[-] Password not added. Please choose a stronger password.", "red"))
     def get_password(self, i_d):
-        if not os.path.exists(self.PASSFILE):
+        if not os.path.exists(PASSFILE):
             return None
         try:
-            with open(self.PASSFILE, 'r') as file:
+            with open(PASSFILE, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             data = []
@@ -1797,10 +1862,10 @@ class PasswordManager:
             print(colored("[-] Invalid Account ID", "red"))
             return
         master_pass = getpass.getpass(colored("[*] Master Password: ", "yellow"))
-        if not os.path.exists(self.PASSFILE):
+        if not os.path.exists(PASSFILE):
             print(colored("[-] No passwords saved. Deletion failed!", "red"))
             return
-        with open(self.USER_DATA_FILE, 'r') as file:
+        with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
         stored_master_password = user_data['master_password']
         salt = user_data['salt']
@@ -1810,28 +1875,28 @@ class PasswordManager:
             print(colored("[-] Incorrect current master password. Delete password failed!", "red"))
             return
         try:
-            with open(self.PASSFILE, 'r') as file:
+            with open(PASSFILE, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             data = []
         deleted_entry = next((entry for entry in data if entry['account_id'] == acc_id and entry.get('email_address/phone') and entry.get('username')), None)
         if deleted_entry:
             data.remove(deleted_entry)
-            with open(self.PASSFILE, 'w') as file:
+            with open(PASSFILE, 'w') as file:
                 json.dump(data, file, indent=4)
             print(colored("[+] Password deleted successfully!", "green"))
             if not data:
-                os.remove(self.PASSFILE)
+                os.remove(PASSFILE)
                 return
         else:
             print(colored("[-] Password not found! Deletion failed!", "red"))
     def change_password(self, acc_id):
         data = []
-        if not os.path.exists(self.PASSFILE):
+        if not os.path.exists(PASSFILE):
             print(colored("[-] No passwords saved!", "red"))
             return
         try:
-            with open(self.PASSFILE, 'r') as file:
+            with open(PASSFILE, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             pass
@@ -1856,7 +1921,7 @@ class PasswordManager:
                 print(colored("[-] Password has been used. (Change password failed) Avoid reusing passwords!", "red"))
                 return
             try:
-                with open(self.PASSFILE, 'r') as file:
+                with open(PASSFILE, 'r') as file:
                     data = json.load(file)
             except json.JSONDecodeError:
                 data = []
@@ -1864,7 +1929,7 @@ class PasswordManager:
                 if entry['account_id'] == acc_id:
                     entry['password'] = encrypted_new_password
                     entry['expiry_at'] = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S')
-                    with open(self.PASSFILE, 'w') as file:
+                    with open(PASSFILE, 'w') as file:
                         json.dump(data, file, indent=4)
                     decrypted_password = self.decrypt_password(entry['password'])
                     if decrypted_password:
@@ -1880,7 +1945,7 @@ class PasswordManager:
         return self.cipher.decrypt(encrypted_password.encode()).decode()
     def change_master_password(self):
         current_password = getpass.getpass(colored("[*] Current Master Password: ", "yellow"))
-        with open(self.USER_DATA_FILE, 'r') as file:
+        with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
         stored_master_password = user_data['master_password']
         salt = user_data['salt']
@@ -1908,7 +1973,7 @@ class PasswordManager:
                             break
                         hashed_new_password = self.ph.hash(new_password + salt)
                         user_data['master_password'] = hashed_new_password
-                        with open(self.USER_DATA_FILE, 'w') as file:
+                        with open(USER_DATA_FILE, 'w') as file:
                             json.dump(user_data, file)
                         self.master_password = new_password
                         print(colored("[+] Master Password changed successfully!", "green"))
@@ -1921,7 +1986,7 @@ class PasswordManager:
                         break
                     hashed_new_password = self.ph.hash(new_password + salt)
                     user_data['master_password'] = hashed_new_password
-                    with open(self.USER_DATA_FILE, 'w') as file:
+                    with open(USER_DATA_FILE, 'w') as file:
                         json.dump(user_data, file)
                     self.master_password = new_password
                     print(colored("[+] Master Password changed successfully!", "green"))
@@ -1943,11 +2008,11 @@ class PasswordManager:
                 return True
         return False
     def add_key(self, platform, key_name, key):
-        if not os.path.exists(self.API):
+        if not os.path.exists(API):
             data = []
         else:
             try:
-                with open(self.API, 'r') as file:
+                with open(API, 'r') as file:
                     data = json.load(file)
             except json.JSONDecodeError:
                 data = []
@@ -1968,7 +2033,7 @@ class PasswordManager:
             'added_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
         data.append(api_key_entry)
-        with open(self.API, 'w') as file:
+        with open(API, 'w') as file:
             json.dump(data, file, indent=4)
         print(colored(f"[+] API Key added! Account ID for this API Key: {unique_id}", "green"))
     def check_cardnumber_reuse(self, new_card_type, new_card_number, existing_data):
@@ -1985,11 +2050,11 @@ class PasswordManager:
                 return True
         return False
     def add_card_pin(self, card_type, card_number, pin):
-        if not os.path.exists(self.CARD_PIN_FILE):
+        if not os.path.exists(CARD_PIN_FILE):
             data = []
         else:
             try:
-                with open(self.CARD_PIN_FILE, 'r') as file:
+                with open(CARD_PIN_FILE, 'r') as file:
                     data = json.load(file)
             except json.JSONDecodeError:
                 data = []
@@ -2011,14 +2076,14 @@ class PasswordManager:
             'expiry_at': (datetime.now() + timedelta(days=60)).strftime('%Y-%m-%d %H:%M:%S')
         }
         data.append(card_pin_entry)
-        with open(self.CARD_PIN_FILE, 'w') as file:
+        with open(CARD_PIN_FILE, 'w') as file:
             json.dump(data, file, indent=4)
         print(colored(f"[+] Card PIN added! Card ID for this PIN: {unique_id}", "green"))
     def get_key(self, acc_id):
-        if not os.path.exists(self.API):
+        if not os.path.exists(API):
             return None
         try:
-            with open(self.API, 'r') as file:
+            with open(API, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             return None
@@ -2029,10 +2094,10 @@ class PasswordManager:
                 return decrypted_key
         return None
     def get_card_pin(self, card_id):
-        if not os.path.exists(self.CARD_PIN_FILE):
+        if not os.path.exists(CARD_PIN_FILE):
             return None
         try:
-            with open(self.CARD_PIN_FILE, 'r') as file:
+            with open(CARD_PIN_FILE, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             return None
@@ -2048,10 +2113,10 @@ class PasswordManager:
             print(colored("[-] Invalid Card ID!", "red"))
             return
         master_pass = getpass.getpass(colored("[*] Master Password: ", "yellow"))
-        if not os.path.exists(self.CARD_PIN_FILE):
+        if not os.path.exists(CARD_PIN_FILE):
             print(colored("[-] No PIN saved. Deletion failed!", "red"))
             return
-        with open(self.USER_DATA_FILE, 'r') as file:
+        with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
         stored_master_password = user_data['master_password']
         salt = user_data['salt']
@@ -2061,18 +2126,18 @@ class PasswordManager:
             print(colored("[-] Incorrect current master password. Deletion failed!", "red"))
             return
         try:
-            with open(self.CARD_PIN_FILE, 'r') as file:
+            with open(CARD_PIN_FILE, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             data = []
         deleted_entry = next((entry for entry in data if entry['card_id'] == card_id), None)
         if deleted_entry:
             data.remove(deleted_entry)
-            with open(self.CARD_PIN_FILE, 'w') as file:
+            with open(CARD_PIN_FILE, 'w') as file:
                 json.dump(data, file, indent=4)
             print(colored("[+] Card PIN deleted successfully!", "green"))
             if not data:
-                os.remove(self.CARD_PIN_FILE)
+                os.remove(CARD_PIN_FILE)
                 return
         else:
             print(colored("[-] PIN not found! Deletion failed!", "red"))
@@ -2083,10 +2148,10 @@ class PasswordManager:
             print(colored("[-] Invalid Account ID!", "red"))
             return
         master_pass = getpass.getpass(colored("[*] Master Password: ", "yellow"))
-        if not os.path.exists(self.API):
+        if not os.path.exists(API):
             print(colored("[-] No API Keys saved. Deletion failed", "red"))
             return
-        with open(self.USER_DATA_FILE, 'r') as file:
+        with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
         stored_master_password = user_data['master_password']
         salt = user_data['salt']
@@ -2096,28 +2161,28 @@ class PasswordManager:
             print(colored("[-] Incorrect current master password. Deletion failed!", "red"))
             return
         try:
-            with open(self.API, 'r') as file:
+            with open(API, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             data = []
         deleted_entry = next((entry for entry in data if entry['unique_id'] == acc_id), None)
         if deleted_entry:
             data.remove(deleted_entry)
-            with open(self.API, 'w') as file:
+            with open(API, 'w') as file:
                 json.dump(data, file, indent=4)
             print(colored("[+] API Key successfully deleted!", "green"))
             if not data:
-                os.remove(self.API)
+                os.remove(API)
                 return
         else:
             print(colored("[-] API Key not found! Deletion failed!", "red"))
     def change_pin(self, card_id):
         data = []
-        if not os.path.exists(self.CARD_PIN_FILE):
+        if not os.path.exists(CARD_PIN_FILE):
             print(colored("[-] No PIN saved!", "red"))
             return
         try:
-            with open(self.CARD_PIN_FILE, 'r') as file:
+            with open(CARD_PIN_FILE, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             pass
@@ -2157,7 +2222,7 @@ class PasswordManager:
                 print(colored("[-] PIN has been used. (Change PIN failed) Avoid reusing PINs!", "red"))
                 return
             try:
-                with open(self.CARD_PIN_FILE, 'r') as file:
+                with open(CARD_PIN_FILE, 'r') as file:
                     data = json.load(file)
             except json.JSONDecodeError:
                 data = []
@@ -2165,7 +2230,7 @@ class PasswordManager:
                 if entry['card_id'] == card_id:
                     entry['pin'] = encrypted_new_pin
                     entry['expiry_at'] = (datetime.now() + timedelta(days=60)).strftime('%Y-%m-%d %H:%M:%S')
-                    with open(self.CARD_PIN_FILE, 'w') as file:
+                    with open(CARD_PIN_FILE, 'w') as file:
                         json.dump(data, file, indent=4)
                     decrypted_pin = self.decrypt_information(entry['pin'])
                     if decrypted_pin:
@@ -2177,11 +2242,11 @@ class PasswordManager:
             print(colored("[-] Incorrect current PIN. Change PIN failed!", "red"))
     def change_key(self, acc_id):
         data = []
-        if not os.path.exists(self.API):
+        if not os.path.exists(API):
             print(colored("[-] No KEYS saved!", "red"))
             return
         try:
-            with open(self.API, 'r') as file:
+            with open(API, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             pass
@@ -2204,14 +2269,14 @@ class PasswordManager:
                 print(colored("[-] API Key has been used. (Change Key failed) Avoid reusing Keys!", "red"))
                 return
             try:
-                with open(self.API, 'r') as file:
+                with open(API, 'r') as file:
                     data = json.load(file)
             except json.JSONDecodeError:
                 data = []
             for entry in data:
                 if entry['unique_id'] == acc_id:
                     entry['key'] = encrypted_new_key
-                    with open(self.API, 'w') as file:
+                    with open(API, 'w') as file:
                         json.dump(data, file, indent=4)
                     decrypted_key = self.decrypt_information(entry['key'])
                     if decrypted_key:
@@ -2242,11 +2307,11 @@ class PasswordManager:
         if not public_key.startswith("ssh-rsa"):
             return False
     def add_ssh_key(self, username, key_name, private_key, public_key, passphrase=None):
-        if not os.path.exists(self.SSH):
+        if not os.path.exists(SSH):
             data = []
         else:
             try:
-                with open(self.SSH, 'r') as file:
+                with open(SSH, 'r') as file:
                     data = json.load(file)
             except json.JSONDecodeError:
                 data = []
@@ -2269,14 +2334,14 @@ class PasswordManager:
             'added_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
         data.append(ssh_key_entry)
-        with open(self.SSH, 'w') as file:
+        with open(SSH, 'w') as file:
             json.dump(data, file, indent=4)
         print(colored(f"[+] SSH Key added! Key ID for that Key: {unique_id}", "green"))
     def get_private_ssh_key(self, key_id):
-        if not os.path.exists(self.SSH):
+        if not os.path.exists(SSH):
             return None
         try:
-            with open(self.SSH, 'r') as file:
+            with open(SSH, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             return None
@@ -2286,10 +2351,10 @@ class PasswordManager:
                 return decrypted_priv_key
         return None
     def get_public_ssh_key(self, key_id):
-        if not os.path.exists(self.SSH):
+        if not os.path.exists(SSH):
             return None
         try:
-            with open(self.SSH, 'r') as file:
+            with open(SSH, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             return None
@@ -2299,10 +2364,10 @@ class PasswordManager:
                 return decrypted_pub_key
         return None
     def get_passphrase_private_ssh_key(self, key_id):
-        if not os.path.exists(self.SSH):
+        if not os.path.exists(SSH):
             return None
         try:
-            with open(self.SSH, 'r') as file:
+            with open(SSH, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             return None
@@ -2322,10 +2387,10 @@ class PasswordManager:
             print(colored("[-] Invalid Key ID!", "red"))
             return
         master_pass = getpass.getpass(colored("[*] Master Password: ", "yellow"))
-        if not os.path.exists(self.SSH):
+        if not os.path.exists(SSH):
             print(colored("[-] No SSH Keys saved. Deletion failed", "red"))
             return
-        with open(self.USER_DATA_FILE, 'r') as file:
+        with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
         stored_master_password = user_data['master_password']
         salt = user_data['salt']
@@ -2335,28 +2400,28 @@ class PasswordManager:
             print(colored("[-] Incorrect current master password. Deletion failed!", "red"))
             return
         try:
-            with open(self.SSH, 'r') as file:
+            with open(SSH, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             data = []
         deleted_entry = next((entry for entry in data if entry['key_id'] == key_id), None)
         if deleted_entry:
             data.remove(deleted_entry)
-            with open(self.SSH, 'w') as file:
+            with open(SSH, 'w') as file:
                 json.dump(data, file, indent=4)
             print(colored("[+] SSH Key successfully deleted!", "green"))
             if not data:
-                os.remove(self.SSH)
+                os.remove(SSH)
                 return
         else:
             print(colored("[-] SSH Key not found! Deletion failed!", "red"))
     def change_ssh_key(self, key_id):
         data = []
-        if not os.path.exists(self.SSH):
+        if not os.path.exists(SSH):
             print(colored("[-] No SSH Keys saved!", "red"))
             return
         try:
-            with open(self.SSH, 'r') as file:
+            with open(SSH, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             pass
@@ -2417,7 +2482,7 @@ class PasswordManager:
                     entry['private_key'] = self.encrypt_information(new_private_key)
                     entry['public_key'] = self.encrypt_information(new_public_key)
                     entry['passphrase'] = 'null'
-            with open(self.SSH, 'w') as file:
+            with open(SSH, 'w') as file:
                 json.dump(data, file, indent=4)
             print(colored("[+] SSH Key updated successfully!", "green"))
         except paramiko.ssh_exception.PasswordRequiredException:
@@ -2443,7 +2508,7 @@ class PasswordManager:
                         entry['private_key'] = self.encrypt_information(new_private_key)
                         entry['public_key'] = self.encrypt_information(new_public_key)
                         entry['passphrase'] = self.encrypt_information(new_passphrase)
-                with open(self.SSH, 'w') as file:
+                with open(SSH, 'w') as file:
                     json.dump(data, file, indent=4)
                 print(colored("[+] SSH Key updated successfully!", "green"))
     def check_title_reuse(self, title, existing_data):
@@ -2453,11 +2518,11 @@ class PasswordManager:
                 return True
         return False
     def add_private_note(self, title, note):
-        if not os.path.exists(self.PRIVNOTE):
+        if not os.path.exists(PRIVNOTE):
             data = []
         else:
             try:
-                with open(self.PRIVNOTE, 'r') as file:
+                with open(PRIVNOTE, 'r') as file:
                     data = json.load(file)
             except json.JSONDecodeError:
                 data = []
@@ -2474,14 +2539,14 @@ class PasswordManager:
             'added_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
         data.append(priv_note_entry)
-        with open(self.PRIVNOTE, 'w') as file:
+        with open(PRIVNOTE, 'w') as file:
             json.dump(data, file, indent=4)
         print(colored(f"[+] Private Note added! Note ID for that Note: {unique_id}", "green"))
     def get_private_note(self, note_id):
-        if not os.path.exists(self.PRIVNOTE):
+        if not os.path.exists(PRIVNOTE):
             return None
         try:
-            with open(self.PRIVNOTE, 'r') as file:
+            with open(PRIVNOTE, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             return None
@@ -2498,10 +2563,10 @@ class PasswordManager:
             print(colored("[-] Invalid Note ID!", "red"))
             return
         master_pass = getpass.getpass(colored("[*] Master Password: ", "yellow"))
-        if not os.path.exists(self.PRIVNOTE):
+        if not os.path.exists(PRIVNOTE):
             print(colored("[-] No Private Note saved. Deletion failed", "red"))
             return
-        with open(self.USER_DATA_FILE, 'r') as file:
+        with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
         stored_master_password = user_data['master_password']
         salt = user_data['salt']
@@ -2511,18 +2576,18 @@ class PasswordManager:
             print(colored("[-] Incorrect current master password. Deletion failed!", "red"))
             return
         try:
-            with open(self.PRIVNOTE, 'r') as file:
+            with open(PRIVNOTE, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             data = []
         deleted_entry = next((entry for entry in data if entry['note_id'] == note_id), None)
         if deleted_entry:
             data.remove(deleted_entry)
-            with open(self.PRIVNOTE, 'w') as file:
+            with open(PRIVNOTE, 'w') as file:
                 json.dump(data, file, indent=4)
             print(colored("[+] Private Note successfully deleted!", "green"))
             if not data:
-                os.remove(self.PRIVNOTE)
+                os.remove(PRIVNOTE)
                 return
         else:
             print(colored("[-] Private Note not found! Deletion failed!", "red"))
@@ -2533,11 +2598,11 @@ class PasswordManager:
                 return True
         return False
     def add_source_code(self, filename, code):
-        if not os.path.exists(self.SRCCODE):
+        if not os.path.exists(SRCCODE):
             data = []
         else:
             try:
-                with open(self.SRCCODE, 'r') as file:
+                with open(SRCCODE, 'r') as file:
                     data = json.load(file)
             except json.JSONDecodeError:
                 data = []
@@ -2554,14 +2619,14 @@ class PasswordManager:
             'added_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
         data.append(source_code_entry)
-        with open(self.SRCCODE, 'w') as file:
+        with open(SRCCODE, 'w') as file:
             json.dump(data, file, indent=4)
         print(colored(f"[+] Source Code added! Code ID for that Code: {unique_id}", "green"))
     def get_source_code(self, code_id):
-        if not os.path.exists(self.SRCCODE):
+        if not os.path.exists(SRCCODE):
             return None
         try:
-            with open(self.SRCCODE, 'r') as file:
+            with open(SRCCODE, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             return None
@@ -2578,10 +2643,10 @@ class PasswordManager:
             print(colored("[-] Invalid Code ID!", "red"))
             return
         master_pass = getpass.getpass(colored("[*] Master Password: ", "yellow"))
-        if not os.path.exists(self.SRCCODE):
+        if not os.path.exists(SRCCODE):
             print(colored("[-] No Source Code saved. Deletion failed", "red"))
             return
-        with open(self.USER_DATA_FILE, 'r') as file:
+        with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
         stored_master_password = user_data['master_password']
         salt = user_data['salt']
@@ -2591,18 +2656,18 @@ class PasswordManager:
             print(colored("[-] Incorrect current master password. Deletion failed!", "red"))
             return
         try:
-            with open(self.SRCCODE, 'r') as file:
+            with open(SRCCODE, 'r') as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             data = []
         deleted_entry = next((entry for entry in data if entry['code_id'] == code_id), None)
         if deleted_entry:
             data.remove(deleted_entry)
-            with open(self.SRCCODE, 'w') as file:
+            with open(SRCCODE, 'w') as file:
                 json.dump(data, file, indent=4)
             print(colored("[+] Source Code successfully deleted!", "green"))
             if not data:
-                os.remove(self.SRCCODE)
+                os.remove(SRCCODE)
                 return
         else:
             print(colored("[-] Source Code not found! Deletion failed!", "red"))
@@ -2646,7 +2711,7 @@ if __name__ == '__main__':
                     if choice == "":
                         continue
                     elif choice == 'regis':
-                        if os.path.exists(password_manager.USER_DATA_FILE) and os.path.getsize(password_manager.USER_DATA_FILE) != 0:
+                        if os.path.exists(USER_DATA_FILE) and os.path.getsize(USER_DATA_FILE) != 0:
                             print(colored("[-] Master user already exists!!", "red"))                                                         
                         else:
                             username = input(colored("[*] New Username: ", "yellow"))
@@ -2684,7 +2749,7 @@ if __name__ == '__main__':
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
                             exit()
-                        if os.path.exists(password_manager.USER_DATA_FILE):
+                        if os.path.exists(USER_DATA_FILE):
                             username = input(colored("[*] Username: ", "yellow"))
                             master_password = getpass.getpass(colored("[*] Master password: ", "yellow"))
                             encryption_key = getpass.getpass(colored("[*] Encryption key: ", "yellow"))
@@ -2776,7 +2841,7 @@ if __name__ == '__main__':
                     if choice == "":
                         continue
                     elif choice == 'regis':
-                        if os.path.exists(password_manager.USER_DATA_FILE) and os.path.getsize(password_manager.USER_DATA_FILE) != 0:
+                        if os.path.exists(USER_DATA_FILE) and os.path.getsize(USER_DATA_FILE) != 0:
                             print(colored("[-] Master user already exists!!", "red"))
                         else:
                             username = input(colored("[*] New Username: ", "yellow"))
@@ -2814,7 +2879,7 @@ if __name__ == '__main__':
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
                             exit()
-                        if os.path.exists(password_manager.USER_DATA_FILE):
+                        if os.path.exists(USER_DATA_FILE):
                             username = input(colored("[*] Username: ", "yellow"))
                             master_password = getpass.getpass(colored("[*] Master password: ", "yellow"))
                             encryption_key = getpass.getpass(colored("[*] Encryption key: ", "yellow"))
@@ -2875,3 +2940,4 @@ if __name__ == '__main__':
                 print(colored(remember, "cyan"))
                 print(colored("Creating a password is like crafting a witty joke: it should be unique, memorable, and leave hackers scratching their heads. So, don't be shy to sprinkle a dash of humor into your password game – after all, laughter is the best encryption!", "cyan"))
                 sys.exit()
+
