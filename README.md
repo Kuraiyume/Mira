@@ -86,7 +86,7 @@ MIRA supports various types of credentials, including:
 
 - **Enhanced User Data Encryption**: Worked hard to make your password vault more secure by adding more complex encryptions in your main user in MIRA.
 
-- **Loggings Tracker**: Mira can track login attempts, with the time logged and the status if the logging is successful or not.
+- **Loggings Tracker**: Mira can track login attempts, with the time logged and the status if the logging is successful or not, and the entered username.
   
 - **Reset Functionality**: In the Premium Version, MIRA offers a reset option designed to provide users with a comprehensive tool for data management. By selecting this option, users can initiate a process that deletes all saved credentials, including their primary MIRA account. This feature serves as a safeguard, enabling users to reset their MIRA instance in situations such as compromised accounts or a need for a fresh start.
 
