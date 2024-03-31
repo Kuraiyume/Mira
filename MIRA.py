@@ -3,15 +3,14 @@ about = """
 Author: Fredmark Ivan D. Dizon && John Russel L. Escote
 GitHub: https://github.com/veilwr4ith && https://github.com/icode3rror
 
-Project: MIRA - GiraSec Solutions's CLI Password Manager (PREMIUM)
-GitHub Repository: https://github.com/GiraSec/MIRA
+Project: MIRA - GiraSec Solutions's CLI Password Manager
+GitHub Repository: https://github.com/veilwr4ith/MIRA
 License: General Public License
 
-Version: 2.1.23
+Version: 1.2.23
 Release Date: 2024-03-12
 
 For Concerns and Issues please email us here:
-girasesolutions@gmail.com
 fredmarkivand@gmail.com
 johnrussel205@gmail.com
 ---------------------------------------------------------------
@@ -73,8 +72,8 @@ wolf = r'''
                           `Y8               ,8"           `P                      / /|_/ // // /_/ / /| |
                             Y8o        ,d8P'              ba                     / /  / // // _, _/ ___ |
                        ooood8888888P"""'                  P'                    /_/  /_/___/_/ |_/_/  |_|
-                    ,od                                  8                          GiraSec Solutions
-                 ,dP     o88o                           o'                                2.1.23
+                    ,od                                  8                              VeilWr4ith
+                 ,dP     o88o                           o'                                1.2.23
                 ,dP          8                          8
                ,d'   oo       8                       ,8
                $    d$"8      8           Y    Y  o   8
@@ -551,6 +550,8 @@ class PasswordManager:
                 print(colored("\n[+] Registration complete!!", "green"))
                 print(colored(f"[+] Encryption key: {encryption_key.decode()}", "green"))
                 print(colored("\n[*] Caution: Save your encryption key and store it somewhere safe Mira will never recover your encryption key once you forgot it!!! So please don't be stupid:)", "yellow"))
+    def get_username_log(self, uname):
+        return uname
     def log_login_attempt(self, login_status):
         try:
             with open(LOGS, 'r') as file:
@@ -559,7 +560,8 @@ class PasswordManager:
             data = []
         log_entry = {
             'time': time.strftime("%Y-%m-%d %H:%M:%S"),
-             'status': 'Success' if login_status else 'Failed'
+            'status': 'Success' if login_status else 'Failed',
+            'entered_username': self.get_username_log(username)
         }
         data.append(log_entry)
         with open(LOGS, 'w') as file:
@@ -632,25 +634,27 @@ class PasswordManager:
                     for entry in data:
                         key_status.append({
                             'time': entry['time'],
-                            'status': entry['status']
+                            'status': entry['status'],
+                            'username': entry['entered_username']
                         })
                 elif isinstance(data, dict): 
                     key_status = [{
                         'time': data['time'],
-                        'status': data['status']
+                        'status': data['status'],
+                        'username': data['entered_username']
                     }]
                 else:
                     raise ValueError("Invalid JSON format")
                 if key_status:
                     print(colored("[+] All Previous Logs:", "green"))
-                    print(colored("\nTime Logged".ljust(31) + "Status", "cyan"))
-                    print(colored("--------------------".ljust(30) + "---------------", "cyan"))
+                    print(colored("\nTime Logged".ljust(31) + "Status".ljust(24) + "Entered Username", "cyan"))
+                    print(colored("--------------------".ljust(30) + "-------------".ljust(24) + "--------------------", "cyan"))
                     for user_status in key_status:
                         if user_status['status'] == "Success":
                             status_color = 'green'
                         else:
                             status_color = 'red'
-                        print(f"{colored(str(user_status['time']).ljust(30), 'cyan')}{colored(str(user_status['status']), status_color)}")
+                        print(f"{colored(str(user_status['time']).ljust(30), 'cyan')}{colored(str(user_status['status']).ljust(24), status_color)}{colored(str(user_status['username']), 'cyan')}")
                 else:
                     print(colored("[-] No Logs has been found.", "red"))
         except FileNotFoundError:
@@ -1743,7 +1747,7 @@ class PasswordManager:
 - Enable Two-Factor Authentication for an additional layer of security.
 - Mira operates on a Zero-Knowledge basis, which means that the security of your account relies solely on the strength and secrecy of your master password, without any involvement from the service provider. So, it's essential not to compromise your account's security with careless actions. Don't be a bitch!
 
-[**] Note: Master Password strength policy requires at least 20 characters with uppercase, numbers, and special characters. (Mandatory).
+[**] Note: Master Password strength policy requires at least 15 characters with uppercase, numbers, and special characters. (Mandatory).
 [**] Note: Password strength policy for platforms requires at least 10 characters with uppercase, numbers, and special characters also. (Optional, but we recommend you to follow our password policy.) """, "cyan"))
             elif choice == 'exit':
                 print(colored("[*] MIRA Terminated!", "red"))
@@ -2884,6 +2888,7 @@ if __name__ == '__main__':
                             master_password = getpass.getpass(colored("[*] Master password: ", "yellow"))
                             encryption_key = getpass.getpass(colored("[*] Encryption key: ", "yellow"))
                             password_manager.login(username, master_password, encryption_key)
+                            password_manager.get_username_log(username)
                         else:
                             print(colored("[-] You have not registered. Please do that.", "red"))
                     elif choice == 'help' or choice == 'h':
