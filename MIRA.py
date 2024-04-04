@@ -109,6 +109,7 @@ from termcolor import colored
 from pyotp import TOTP, random_base32
 from functools import wraps
 import string
+from collections import deque
 import random
 import json
 import platform
@@ -174,7 +175,7 @@ def get_current_datetime():
     return f"Current Time: {time_str}\nDate: {date_str}"
 if os.name == "posix":
     LOCKOUT_FILE = os.environ.get('LOCKOUT_FILE', '/etc/.lockout')
-    USER_DATA_FILE = os.environ.get('USER_DATA_FILE', '/etc/.user')
+    ADMIN_DATA_FILE = os.environ.get('USER_DATA_FILE', '/etc/.user')
     PASSFILE = os.environ.get('PASSFILE', '/etc/.pass')
     API = os.environ.get('API', '/etc/.api')
     CARD_PIN_FILE = os.environ.get('CARD_PIN_FILE', '/etc/.card')
@@ -197,6 +198,7 @@ elif os.name == "nt":
     SRCCODE = os.path.join(app_folder_path, 'srccode')
     LOGS = os.path.join(app_folder_path, 'loggings')
 class PasswordManager:
+    MAX_LOGIN_STR = 20
     MAX_LOGIN_ATTEMPTS = 4 
     LOCKOUT_DURATION_SECONDS = 300
     def __init__(self):
@@ -563,6 +565,8 @@ class PasswordManager:
             'status': 'Success' if login_status else 'Failed',
             'entered_username': self.get_username_log(username)
         }
+        if len(data)>= PasswordManager.MAX_LOGIN_STR:
+            data = data[5:]
         data.append(log_entry)
         with open(LOGS, 'w') as file:
             json.dump(data, file, indent=4)
@@ -1440,14 +1444,16 @@ class PasswordManager:
                 caution = input(colored("[*] Caution: After attempting to do reset, all of the data including your passwords and your master user in mira will be deleted permanently! Are you sure that you want to proceed? (y/N): ", "yellow"))
                 if caution == 'y':
                     master_password = getpass.getpass(colored("Master Password: ", "yellow"))
+                    if master_password is None:
+                        print(colored("[-] Incorrect current master password. Reset procedure failed!", "red"))
+                        continue
                     with open(USER_DATA_FILE, 'r') as file:
                         user_data = json.load(file)
-                    stored_master_password = user_data['master_password']
-                    salt = user_data['salt']
+                    stored_master_password = self.decrypt_password((base64.b64decode(user_data.get('9034374927023', ''))).decode())
                     try:
-                        self.ph.verify(stored_master_password, master_password + salt)
+                        self.ph.verify(stored_master_password, master_password + user_data.get('2104941992374', ''))
                     except VerifyMismatchError:
-                        print(colored("\n[-] Incorrect current master password. Reset procedure failed!", "red"))
+                        print(colored("[-] Incorrect current master password. Reset procedure failed!", "red"))
                         continue
                     if os.path.exists(LOCKOUT_FILE):
                         os.remove(LOCKOUT_FILE)
@@ -1471,10 +1477,6 @@ class PasswordManager:
                         pass
                     if os.path.exists(SSH):
                         os.remove(SSH)
-                    else:
-                        pass
-                    if os.path.exists(LOGS):
-                        os.remove(LOGS)
                     else:
                         pass
                     os.remove(USER_DATA_FILE)
@@ -1951,10 +1953,9 @@ class PasswordManager:
         current_password = getpass.getpass(colored("[*] Current Master Password: ", "yellow"))
         with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
-        stored_master_password = user_data['master_password']
-        salt = user_data['salt']
+        stored_master_password = self.decrypt_password((base64.b64decode(user_data.get('9034374927023', ''))).decode())
         try:
-            self.ph.verify(stored_master_password, current_password + salt)
+            self.ph.verify(stored_master_password, current_password + user_data.get('2104941992374', ''))
         except VerifyMismatchError:
             print(colored("[-] Incorrect current master password. Change password failed!", "red"))
             return
@@ -1975,8 +1976,12 @@ class PasswordManager:
                     elif confirm_password_option.lower() == 'y':
                         if not self.check_master_password_strength(new_password):
                             break
-                        hashed_new_password = self.ph.hash(new_password + salt)
-                        user_data['master_password'] = hashed_new_password
+                        fernet = Fernet(encryption_key) 
+                        salt = user_data['2104941992374']
+                        hashed_new_master_password = self.ph.hash(new_password + salt)
+                        encrypted_master_password = fernet.encrypt(hashed_new_master_password.encode())
+                        encrypted_new_master_password_b64 = base64.b64encode(encrypted_master_password).decode()
+                        user_data['9034374927023'] = encrypted_new_master_password_b64
                         with open(USER_DATA_FILE, 'w') as file:
                             json.dump(user_data, file)
                         self.master_password = new_password
@@ -1988,8 +1993,12 @@ class PasswordManager:
                 elif show_password_option.lower() == 'n':
                     if not self.check_master_password_strength(new_password):
                         break
-                    hashed_new_password = self.ph.hash(new_password + salt)
-                    user_data['master_password'] = hashed_new_password
+                    fernet = Fernet(encryption_key) 
+                    salt = user_data['2104941992374']
+                    hashed_new_master_password = self.ph.hash(new_password + salt)
+                    encrypted_master_password = fernet.encrypt(hashed_new_master_password.encode())
+                    encrypted_new_master_password_b64 = base64.b64encode(encrypted_master_password).decode()
+                    user_data['9034374927023'] = encrypted_new_master_password_b64
                     with open(USER_DATA_FILE, 'w') as file:
                         json.dump(user_data, file)
                     self.master_password = new_password
