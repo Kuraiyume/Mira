@@ -145,7 +145,7 @@ MIRA supports various types of credentials, including:
 
 ## For Executable Version of MIRA
 
-- Click this link and Download: [here](https://drive.google.com/file/d/1qEjNkgD1owcuN6uVLBQRvcZ5ohRd8k2v/export?format=exe)
+- Click this link and Download: [here](https://drive.google.com/file/d/1qEjNkgD1owcuN6uVLBQRvcZ5ohRd8k2v/export?format=MIRA.exe)
 
 
 *Make sure that when you're using Windows, run the installation and MIRA as administrator.*
