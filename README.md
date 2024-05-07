@@ -149,7 +149,7 @@ MIRA supports various types of credentials, including:
 
 
 
-*Make sure that when you're using Windows, run the installation and MIRA as administrator. As well as the executable file, run it as Administrator.*
+*Make sure that when you're using Windows, run the installation and MIRA as administrator. As well as the executable file, run it as Administrator. (In Executable the Paste is not Ctrl+V, just click the Left Mouse Button Once to paste.)*
 
 ## Usage
 
