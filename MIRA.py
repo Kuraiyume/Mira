@@ -1661,7 +1661,7 @@ class PasswordManager:
             elif choice == 'mnemonic_enc_key':
                 encryption_key = input(colored("[*] Key: ", "yellow"))
                 if not encryption_key:
-                    print("[-] No encryption key provided!", "red")
+                    print(colored("[-] No encryption key provided!", "red"))
                     continue
                 try:
                     encryption_key = encryption_key.replace('-', '+').replace('_', '/')
@@ -2775,13 +2775,11 @@ if __name__ == '__main__':
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
                             exit()
-                        print(colored(""""[**] Available Commands:
-'log' - Login (Make sure you're registered before attempt to login)
-'regis' - Register for new user (Only one user!)
-'quit' - Terminate MIRA
-'about' - More information about MIRA
-'dec_mnemonic' - Decode a mnemonic phrase 
-'h' - Help""", "cyan"))
+                        print(colored("[**] Available Commands:", "cyan"))
+                        choices = ["- log: Login (Make sure you're registered before attempt to login)", "- regis: Register for new user (Only one user!)", "- quit: Terminate MIRA", 
+                                   "- dec_mnemonic: Decode a mnemonic phrase", "- about: More information about MIRA"]
+                        for choice in choices:
+                            print(colored(choice, "cyan"))
                     elif choice == 'dec_mnemonic':                                                                                                                   
                         if password_manager.lockout_time and time.time() < password_manager.lockout_time:
                             clear_terminal()
@@ -2906,13 +2904,11 @@ if __name__ == '__main__':
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
                             exit()
-                        print(colored(""""[**] Available Commands:
-'log' - Login (Make sure you're registered before attempt to login)
-'regis' - Register for new user (Only one user!)
-'about' - More information about MIRA
-'dec_mnemonic' - Decode a mnemonic phrase
-'quit' - Terminate MIRA
-'h' - Help""", "cyan"))
+                        print(colored("[**] Available Commands:", "cyan"))
+                        choices = ["- log: Login (Make sure you're registered before attempt to login)", "- regis: Register for new user (Only one user!)", "- quit: Terminate MIRA", 
+                                   "- dec_mnemonic: Decode a mnemonic phrase", "- about: More information about MIRA"]
+                        for choice in choices:
+                            print(colored(choice, "cyan"))
                     elif choice == 'dec_mnemonic':
                         if password_manager.lockout_time and time.time() < password_manager.lockout_time:
                             clear_terminal()
