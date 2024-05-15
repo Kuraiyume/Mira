@@ -78,7 +78,7 @@ MIRA supports various types of credentials, including:
 
 - **Password/PINs Expiry Notifications**: Users receive warnings when passwords are about to expire, prompting them to change passwords regularly for enhanced security.
 
-- **Password Generator**: Mira offers various password generation methods to create strong and unique passwords tailored to user preferences.
+- **Password Generator**: Mira offers various password generation methods to create strong and unique passwords tailored to user preferences. (In pattrn option, **l** -lowercase **u** -uppercase **d** -digits **s** -symbols **a** -ascii+digits)
 
 - **Password Expiry Lister**: Allows users to view the remaining time until a password expires, facilitating proactive password management.
 
@@ -145,7 +145,7 @@ MIRA supports various types of credentials, including:
 
 ## For Executable Version of MIRA
 
-- Click this link and Download: [here](https://www.mediafire.com/file/t8tbrzvjv2juawi/MIRAInstaller.exe/file)
+- Click this link and Download: [here](https://www.mediafire.com/file/njtygknrtmdzur3/MIRAInstaller.exe/file)
 
 
 
@@ -223,7 +223,7 @@ Once logged in, users can utilize various commands, including:
 
 - Master Password strength policy requires at least 15 characters with uppercase, numbers, and special characters. (Mandatory).
 - Password strength policy for platforms requires at least 10 characters with uppercase, numbers, and special characters also. (Optional, but we recommend you to follow our password policy.)
-
+- Japanese Language in Mnemonic Phrase can be faulty sometimes. Use it at your own risk.
 ## License
 
 Mira is licensed under **GNU General Public License v3.0**
