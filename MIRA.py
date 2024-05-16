@@ -90,6 +90,7 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
 from mnemonic import Mnemonic
+from mnemonic.mnemonic import ConfigurationError
 import base64
 import os
 import getpass
@@ -116,6 +117,7 @@ import platform
 import logging
 import sys
 import paramiko
+from paramiko.ssh_exception import SSHException
 import io
 import validators
 import uuid
@@ -174,29 +176,43 @@ def get_current_datetime():
     time_str = current_datetime.strftime("%H:%M:%S")
     return f"Current Time: {time_str}\nDate: {date_str}"
 if os.name == "posix":
-    LOCKOUT_FILE = os.environ.get('LOCKOUT_FILE', '/etc/.lockout')
-    ADMIN_DATA_FILE = os.environ.get('USER_DATA_FILE', '/etc/.user')
-    PASSFILE = os.environ.get('PASSFILE', '/etc/.pass')
-    API = os.environ.get('API', '/etc/.api')
-    CARD_PIN_FILE = os.environ.get('CARD_PIN_FILE', '/etc/.card')
-    SSH = os.environ.get('SSH', '/etc/.ssh')
-    PRIVNOTE = os.environ.get('PRIVNOTE', '/etc/.privnote')
-    SRCCODE = os.environ.get('SRCCODE', '/etc/.srccode')
-    LOGS = os.environ.get('LOGS', '/etc/.loggings')
+    try:
+        etc_path = '/etc/'
+        data_directory = '.Mira'
+        data_directory_path = os.path.join(etc_path, data_directory)
+        os.makedirs(data_directory_path, exist_ok=True)
+        LOCKOUT_FILE = os.path.join(data_directory_path, '.lockout')
+        USER_DATA_FILE = os.path.join(data_directory_path, '.user')
+        PASSFILE = os.path.join(data_directory_path, '.pass')
+        API = os.path.join(data_directory_path, '.api')
+        CARD_PIN_FILE = os.path.join(data_directory_path, '.card')
+        SSH = os.path.join(data_directory_path, '.ssh')
+        PRIVNOTE = os.path.join(data_directory_path, '.privnote')
+        SRCCODE = os.path.join(data_directory_path, '.srccode')
+        LOGS = os.path.join(data_directory_path, '.loggings')
+    except PermissionError:
+        print(colored("[-] Mira requires elevated privileges on Linux. QUITTING!", "red"))
+        time.sleep(8)
+        sys.exit()
 elif os.name == "nt":
-    program_files_dir = os.environ.get('ProgramFiles', 'C:\\Program Files')
-    app_folder_name = 'Mira'
-    app_folder_path = os.path.join(program_files_dir, app_folder_name)
-    os.makedirs(app_folder_path, exist_ok=True)
-    LOCKOUT_FILE = os.path.join(app_folder_path, 'lockout')
-    USER_DATA_FILE = os.path.join(app_folder_path, 'user_data')
-    PASSFILE = os.path.join(app_folder_path, 'pass')
-    API = os.path.join(app_folder_path, 'api')
-    CARD_PIN_FILE = os.path.join(app_folder_path, 'card')
-    SSH = os.path.join(app_folder_path, 'ssh')
-    PRIVNOTE = os.path.join(app_folder_path, 'notes')
-    SRCCODE = os.path.join(app_folder_path, 'srccode')
-    LOGS = os.path.join(app_folder_path, 'loggings')
+    try:
+        program_files_dir = os.environ.get('ProgramFiles', 'C:\\Program Files')
+        app_folder_name = 'Mira'
+        app_folder_path = os.path.join(program_files_dir, app_folder_name)
+        os.makedirs(app_folder_path, exist_ok=True)
+        LOCKOUT_FILE = os.path.join(app_folder_path, 'lockout')
+        USER_DATA_FILE = os.path.join(app_folder_path, 'user_data')
+        PASSFILE = os.path.join(app_folder_path, 'pass')
+        API = os.path.join(app_folder_path, 'api')
+        CARD_PIN_FILE = os.path.join(app_folder_path, 'card')
+        SSH = os.path.join(app_folder_path, 'ssh')
+        PRIVNOTE = os.path.join(app_folder_path, 'notes')
+        SRCCODE = os.path.join(app_folder_path, 'srccode')
+        LOGS = os.path.join(app_folder_path, 'loggings')
+    except PermissionError:
+        print(colored("[-] Mira requires elevated privileges on Windows. QUITTING!", "red"))
+        time.sleep(8)
+        sys.exit()
 class PasswordManager:
     MAX_LOGIN_STR = 20
     MAX_LOGIN_ATTEMPTS = 4 
@@ -714,23 +730,24 @@ class PasswordManager:
                     added_at = datetime.strptime(entry['added_at'], "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")
                     key_status.append({
                         'code_id': entry['code_id'],
+                        'language': self.decrypt_information(entry['language']),
                         'filename': self.decrypt_information(entry['filename']),
                         'added_at': added_at
                     })
             if key_status:
                 if code_id == 'all' or not code_id:
                     print(colored("[+] All Available Source Codes:", "green"))
-                    print(colored("\nCode ID".ljust(23) + "File Name".ljust(30) + "Added At", "cyan"))
-                    print(colored("----------".ljust(22) + "--------------------".ljust(30) + "-------------------", "cyan"))
+                    print(colored("\nCode ID".ljust(22) + "Programming Language".ljust(30) + "File Name".ljust(30) + "Added At", "cyan"))
+                    print(colored("----------".ljust(22) + "-------------------------".ljust(30) + "--------------------".ljust(30) + "-------------------", "cyan"))
                     for user_status in key_status:
-                        print(f"{colored(str(user_status['code_id']).ljust(22), 'cyan')}{colored(str(user_status['filename']).ljust(30), 'cyan')}{colored(str(user_status['added_at']).ljust(25), 'cyan')}")
+                        print(f"{colored(str(user_status['code_id']).ljust(22), 'cyan')}{colored(str(user_status['language']).ljust(30), 'cyan')}{colored(str(user_status['filename']).ljust(30), 'cyan')}{colored(str(user_status['added_at']).ljust(25), 'cyan')}")
                 else:
                     print(colored(f"[+] Info about this Code ID {code_id}:", "green"))
-                    print(colored("\nFile Name".ljust(28) + "Added At", "cyan"))
-                    print(colored("--------------------".ljust(27) + "-------------------", "cyan"))
+                    print(colored("\nProgramming Language".ljust(33) + "File Name".ljust(27) + "Added At", "cyan"))
+                    print(colored("-------------------------".ljust(31) + "--------------------".ljust(27) + "-------------------", "cyan"))
                     for user_status in key_status:
-                        print(f"{colored(str(user_status['filename']).ljust(27), 'cyan')}{colored(str(user_status['added_at']).ljust(25), 'cyan')}")
-            else:
+                        print(f"{colored(str(user_status['language']).ljust(31), 'cyan')}{colored(str(user_status['filename']).ljust(27), 'cyan')}{colored(str(user_status['added_at']).ljust(25), 'cyan')}")
+            else:    
                 print(colored("[-] No matching entries found for the specified Code ID.", "red"))
         except FileNotFoundError:
             print(colored("[-] No Source Code saved. Show Source Code failed!", "red"))
@@ -1168,9 +1185,13 @@ class PasswordManager:
                     json.dump(data, file, indent=4)
                 print(colored("[+] New content added to the Private Note successfully!", "green"))
             elif choice == 'add_src_code':
+                programming_language = input(colored("[*] Programming Language: ", "yellow"))
+                if not programming_language:
+                    print(colored("[-] No Programming Language provided!", "red"))
+                    continue
                 filename = input(colored("[*] File Name: ", "yellow"))
                 if not filename:
-                    print(colored("[-] No filename provided! QUITTING!", "red"))
+                    print(colored("[-] No filename provided!", "red"))
                     continue
                 print(colored("[*] Paste the Source Code Below (Type 'END' on a new line to finish):", "yellow"))
                 source_code_lines = []
@@ -1180,7 +1201,7 @@ class PasswordManager:
                         source_code_lines.append(code)
                         if code.upper() == "END":
                             source_code = '\n'.join(source_code_lines[:-1])
-                            self.add_source_code(filename, source_code)
+                            self.add_source_code(programming_language, filename, source_code)
                             self.notify_expiry()
                             self.notify_pin_expiry()
                             break
@@ -1202,6 +1223,7 @@ class PasswordManager:
                         if entry['code_id'] == code_id:
                             key_found = True
                             if decrypted_code is not None:
+                                print(colored(f"[+] Programming Language: {colored(self.decrypt_information(entry.get('language')), 'green')}", "yellow"))
                                 print(colored(f"[+] File Name: {colored(self.decrypt_information(entry.get('filename')), 'green')}", "yellow"))
                                 print(colored(f"[+] Source Code:", "yellow"))
                                 formatted_code = ''.join(decrypted_code)
@@ -1209,11 +1231,11 @@ class PasswordManager:
                                 self.notify_expiry()
                                 self.notify_pin_expiry()
                             else:
-                                print(colored("[-] Source Code not found. QUITTING!", "red"))
+                                print(colored("[-] Source Code not found.", "red"))
                                 self.notify_expiry()
                                 self.notify_pin_expiry()
                 except FileNotFoundError:
-                    print(colored("[-] Source Code not found. QUITTING!", "red"))
+                    print(colored("[-] Source Code not found.", "red"))
                     continue
             elif choice == 'del_src_code':                                        
                 self.delete_source_code()
@@ -1288,7 +1310,7 @@ class PasswordManager:
                         if line.upper() == "END":
                             break
                 except Exception as e:
-                    print("Error:", e)
+                    print(colored("[-] Error:", e, "red"))
                     continue
                 print(colored("[*] Paste the Public Key Below (Type 'END' on a new line to finish):", "yellow"))
                 public_key_lines = []
@@ -1299,10 +1321,18 @@ class PasswordManager:
                         if line.upper() == "END":
                             break
                 except Exception as e:
-                    print("Error:", e)
+                    print(colored("[-] Error:", e, "red"))
                     continue
                 private_key = '\n'.join(private_key_lines[:-1])
                 public_key = '\n'.join(public_key_lines[:-1])
+                try:
+                    key = paramiko.RSAKey(file_obj=io.StringIO(private_key))
+                except paramiko.ssh_exception.SSHException:
+                    print(colored("[-] Invalid OpenSSH private key", "red"))
+                    continue
+                if not public_key.startswith("ssh-rsa"):
+                    print(colored("[-] Invalid SSH Public Key!", "red"))
+                    continue
                 is_password_protected = False
                 passphrase = None
                 try:
@@ -1477,6 +1507,10 @@ class PasswordManager:
                         pass
                     if os.path.exists(SSH):
                         os.remove(SSH)
+                    else:
+                        pass
+                    if os.path.exists(SRCCODE):
+                        os.remove(SRCCODE)
                     else:
                         pass
                     os.remove(USER_DATA_FILE)
@@ -1660,34 +1694,49 @@ class PasswordManager:
                 self.change_key(acc_id)
             elif choice == 'mnemonic_enc_key':
                 encryption_key = input(colored("[*] Key: ", "yellow"))
+                chosen_language = input(colored("[*] Language: ", "yellow"))
                 if not encryption_key:
                     print(colored("[-] No encryption key provided!", "red"))
                     continue
                 try:
+                    if not chosen_language:
+                        print(colored("[-] No language provided, default to English.", "red"))
+                        chosen_language = "english"
                     encryption_key = encryption_key.replace('-', '+').replace('_', '/')
                     key = base64.b64decode(encryption_key)
                     hex_key = key.hex()
-                    mnemonic = Mnemonic("english")
+                    mnemonic = Mnemonic(chosen_language)
                     mnemonic_phrase = mnemonic.to_mnemonic(bytes.fromhex(hex_key))
                     print(colored(f"[+] Mnemonic Phrase: {mnemonic_phrase}", "green"))
                     print(colored(f"[*] It's advisable to write this phrases on a paper or memorize it if you can.", "yellow"))
                     continue
                 except ValueError:
                     print(colored("[-] The key you provided is not acceptable. Make sure that it's in the correct format.", "red"))
+                    continue
+                except ConfigurationError as e:
+                    print(colored(f"[-] {e}", "red"))
+                    continue
             elif choice == 'dec_mnemonic':
                 mnemonic_phrase = input(colored("[*] Mnemonic Phrase: ", "yellow"))
+                chosen_language = input(colored("[*] Language: ", "yellow"))
                 if not mnemonic_phrase:
                     print(colored("[-] No mnemonic phrase provided!", "red"))
                     continue
                 try:
-                    mnemonic = Mnemonic("english")
+                    if not chosen_language:
+                        print(colored("[-] No language provided, default to English.", "red"))
+                        chosen_language = "english"
+                    mnemonic = Mnemonic(chosen_language)
                     key_bytes = mnemonic.to_entropy(mnemonic_phrase)
                     key_base64 = base64.b64encode(key_bytes).decode()
                     encryption_key = key_base64.replace('+', '-').replace('/', '_')
                     print(colored(f"[+] Encryption Key: {encryption_key}", "green"))
                     continue
                 except ValueError:
-                    print(colored("[-] Insufficient number of words!", "red"))
+                    print(colored("[-] Insufficient number of words or not the correct language!", "red"))
+                    continue
+                except ConfigurationError as e:
+                    print(colored(f"[-] {e}", "red"))
                     continue
             elif choice == 'lout':
                 self.logout()
@@ -1701,6 +1750,7 @@ class PasswordManager:
     'add_ssh_key' - Add a new SSH Key
     'add_src_code' - Add a new Source Code
     'add_priv_note' - Add a new Private Note
+
 2. Retrieving Credentials
     'get_platform_passwd' - Retrieve the plaintext version of the password for the desired account ID
     'get_api_key' - Retrieve the plaintext version of the key of the desired account ID
@@ -1708,6 +1758,7 @@ class PasswordManager:
     'get_ssh_key' - Retrieve the plaintext version of the SSH Key for the desired key ID
     'get_src_code' - Retrieve the plaintext version of the Source Code for the desired code ID
     'get_priv_note' - Retrieve the plaintext version of the Private Note for the desired note ID
+
 3. Deleting Credentials
     'del_platform_passwd' - Delete a saved password according to your desired account ID
     'del_api_key' - Delete key according to your desired account ID
@@ -1715,6 +1766,7 @@ class PasswordManager:
     'del_ssh_key' - Delete a saved SSH Key according to your desired key ID
     'del_src_code' - Delete a saved Source Code according to your desired code ID
     'del_priv_note' - Delete a saved Private Note according to your desired note ID
+
 4. Changing Credentials
     'ch_platform_pass' - Change the password for the desired account ID
     'ch_card_pin' - Change the password for the desired pin ID
@@ -1722,10 +1774,12 @@ class PasswordManager:
     'ch_ssh_key' - Chabge the SSH Key for the desired key ID
     'ch_src_code' - Change the Source Code for the desired code ID
     'ch_priv_note' - Change the Private Note for the desired note ID
+
 5. Security and Configuration
     'enable2fa' - Enable Two-Factor Authentication for added security
     'genpasswd' - Generate a strong password
     'changemaster' - Change the masterkey
+
 6. Listing and Analysis
     'show_passwd_exp' - List the usernames and their status on a specific platform or all
     'show_pin_exp' - List the card numbers and their status on a specific card type or all
@@ -1734,10 +1788,12 @@ class PasswordManager:
     'show_src_code' - List the available Source Code with their Code ID, File Name, and their date when they were added (No Expiry when it comes to Source Code)
     'show_priv_note' - List the available Private Note with their note ID, Title, and when they were added (No Expiry when it comes to Private Notes)
     'show_passwd_strength' - List the strength of the password of a username on a specific platform
-    'show_loggings' - List all the previous logins.
+    'show_loggings' - List all the previous logins
+
 7. Securing Encryption Key
     'mnemonic_enc_key' - Convert the encryption key to a mnemonic phrase (Only applicable for encryption key that has no underscore and hyphen).
     'dec_mnemonic' - Decode a mnemonic phrase to the original encryption key
+
 8. User Actions
     'lout' - Logout
     'exit' - Terminate MIRA
@@ -1749,6 +1805,7 @@ class PasswordManager:
 - Enable Two-Factor Authentication for an additional layer of security.
 - Mira operates on a Zero-Knowledge basis, which means that the security of your account relies solely on the strength and secrecy of your master password, without any involvement from the service provider. So, it's essential not to compromise your account's security with careless actions. Don't be a bitch!
 
+[**] Note: The Japanese Language in mnemonic phrase option can be faulty sometimes, use it at your own risk.
 [**] Note: Master Password strength policy requires at least 15 characters with uppercase, numbers, and special characters. (Mandatory).
 [**] Note: Password strength policy for platforms requires at least 10 characters with uppercase, numbers, and special characters also. (Optional, but we recommend you to follow our password policy.) """, "cyan"))
             elif choice == 'exit':
@@ -1873,10 +1930,9 @@ class PasswordManager:
             return
         with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
-        stored_master_password = user_data['master_password']
-        salt = user_data['salt']
+        decrypted_master_password = self.decrypt_information((base64.b64decode(user_data.get('9034374927023', ''))).decode())
         try:
-            self.ph.verify(stored_master_password, master_pass + salt)
+            self.ph.verify(decrypted_master_password, master_pass + user_data.get('2104941992374', ''))
         except VerifyMismatchError:
             print(colored("[-] Incorrect current master password. Delete password failed!", "red"))
             return
@@ -2131,10 +2187,9 @@ class PasswordManager:
             return
         with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
-        stored_master_password = user_data['master_password']
-        salt = user_data['salt']
+        decrypted_master_password = self.decrypt_information((base64.b64decode(user_data.get('9034374927023', ''))).decode())
         try:
-            self.ph.verify(stored_master_password, master_pass + salt)
+            self.ph.verify(decrypted_master_password, master_pass + user_data.get('2104941992374', ''))
         except VerifyMismatchError:
             print(colored("[-] Incorrect current master password. Deletion failed!", "red"))
             return
@@ -2166,10 +2221,9 @@ class PasswordManager:
             return
         with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
-        stored_master_password = user_data['master_password']
-        salt = user_data['salt']
+        decrypted_master_password = self.decrypt_information((base64.b64decode(user_data.get('9034374927023', ''))).decode())
         try:
-            self.ph.verify(stored_master_password, master_pass + salt)
+            self.ph.verify(decrypted_master_password, master_pass + user_data.get('2104941992374', ''))
         except VerifyMismatchError:
             print(colored("[-] Incorrect current master password. Deletion failed!", "red"))
             return
@@ -2263,7 +2317,7 @@ class PasswordManager:
                 data = json.load(file)
         except json.JSONDecodeError:
             pass
-        account_entry = next((entry for entry in data if entry['account_id'] == acc_id), None)
+        account_entry = next((entry for entry in data if entry['unique_id'] == acc_id), None)
         if account_entry:
             keyname = self.decrypt_information(account_entry['key_name'])
             current_key = getpass.getpass(colored(f"[*] Current key for the given account ID (Usn: {keyname}): ", "yellow"))
@@ -2388,7 +2442,7 @@ class PasswordManager:
             if entry['key_id'] == key_id:
                 encrypted_passphrase = entry['passphrase']
                 if encrypted_passphrase.lower() == 'null':
-                    return colored("null", "red")
+                    return colored("null (This key has no Passphrase!)", "red")
                 else:
                     passphrase = self.decrypt_information(encrypted_passphrase)
                     return passphrase.lower() if passphrase else None
@@ -2405,10 +2459,9 @@ class PasswordManager:
             return
         with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
-        stored_master_password = user_data['master_password']
-        salt = user_data['salt']
+        decrypted_master_password = self.decrypt_information((base64.b64decode(user_data.get('9034374927023', ''))).decode())
         try:
-            self.ph.verify(stored_master_password, master_pass + salt)
+            self.ph.verify(decrypted_master_password, master_pass + user_data.get('2104941992374', ''))
         except VerifyMismatchError:
             print(colored("[-] Incorrect current master password. Deletion failed!", "red"))
             return
@@ -2452,36 +2505,37 @@ class PasswordManager:
                 if current_passphrase != decrypted_passphrase:
                     print(colored("[-] Incorrect current passphrase!", "red"))
                     return
+        print(colored("[*] Paste the New Private Key Below (Type 'END' on a new line to finish):", "yellow"))
+        new_private_key_lines = []
         try:
-            print(colored("[*] Paste the New Private Key Below (Type 'END' on a new line to finish):", "yellow"))
-            new_private_key_lines = []
-            try:
-                while True:
-                    line = input()
-                    new_private_key_lines.append(line)
-                    if line.upper() == "END":
-                        break
-            except Exception as e:
-                print("Error: ", e)
-                return
-            print(colored("[*] Paste the New Public Key Below (Type 'END' on a new line to finish):", "yellow"))
-            new_public_key_lines = []
-            try:
-                while True:
-                    line = input()
-                    new_public_key_lines.append(line)
-                    if line.upper() == "END":
-                        break
-            except Exception as e:
-                print("Error: ", e)
-                return
-        except paramiko.ssh_exception.SSHException:
-            print(colored("[-] Invalid OpenSSH private key", "red"))
+            while True:
+                line = input()
+                new_private_key_lines.append(line)
+                if line.upper() == "END":
+                    break
+        except Exception as e:
+            print("Error: ", e)
+            return
+        except SSHException as e:
+            print(colored("[-] Error", e, "red"))
+            return
+        print(colored("[*] Paste the New Public Key Below (Type 'END' on a new line to finish):", "yellow"))
+        new_public_key_lines = []
+        try:
+            while True:
+                line = input()
+                new_public_key_lines.append(line)
+                if line.upper() == "END":
+                    break
+        except Exception as e:
+            print(colored("[-] Error: ", e, "red"))
             return
         new_private_key = '\n'.join(new_private_key_lines[:-1])
         new_public_key = '\n'.join(new_public_key_lines[:-1])
-        if not new_private_key.startswith("-----BEGIN OPENSSH PRIVATE KEY-----"):
-            print(colored("[-] Invalid SSH Private Key!", "red"))
+        try:
+            key = paramiko.RSAKey(file_obj=io.StringIO(new_private_key))
+        except paramiko.ssh_exception.SSHException:
+            print(colored("[-] Invalid OpenSSH private key", "red"))
             return
         if not new_public_key.startswith("ssh-rsa"):
             print(colored("[-] Invalid SSH Public Key!", "red"))
@@ -2581,10 +2635,9 @@ class PasswordManager:
             return
         with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
-        stored_master_password = user_data['master_password']
-        salt = user_data['salt']
+        decrypted_master_password = self.decrypt_information((base64.b64decode(user_data.get('9034374927023', ''))).decode())
         try:
-            self.ph.verify(stored_master_password, master_pass + salt)
+            self.ph.verify(decrypted_master_password, master_pass + user_data.get('2104941992374', ''))
         except VerifyMismatchError:
             print(colored("[-] Incorrect current master password. Deletion failed!", "red"))
             return
@@ -2610,7 +2663,7 @@ class PasswordManager:
             if decrypted_filename == filename:
                 return True
         return False
-    def add_source_code(self, filename, code):
+    def add_source_code(self, language, filename, code):
         if not os.path.exists(SRCCODE):
             data = []
         else:
@@ -2627,6 +2680,7 @@ class PasswordManager:
         unique_id = int(uuid.uuid4().hex[:4],  16)
         source_code_entry = {                                                  
             'code_id': unique_id,
+            'language': self.encrypt_information(language),
             'filename': self.encrypt_information(filename),
             'code': self.encrypt_information(code),
             'added_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -2645,6 +2699,7 @@ class PasswordManager:
             return None
         for entry in data:
             if entry['code_id'] == code_id:
+                decrypted_language = self.decrypt_information(entry['language'])
                 decrypted_filename = self.decrypt_information(entry['filename'])
                 decrypted_code = self.decrypt_information(entry['code'])
                 return decrypted_code
@@ -2661,10 +2716,9 @@ class PasswordManager:
             return
         with open(USER_DATA_FILE, 'r') as file:
             user_data = json.load(file)
-        stored_master_password = user_data['master_password']
-        salt = user_data['salt']
+        decrypted_master_password = self.decrypt_information((base64.b64decode(user_data.get('9034374927023', ''))).decode())
         try:
-            self.ph.verify(stored_master_password, master_pass + salt)
+            self.ph.verify(decrypted_master_password, master_pass + user_data.get('2104941992374', ''))
         except VerifyMismatchError:
             print(colored("[-] Incorrect current master password. Deletion failed!", "red"))
             return
@@ -2696,7 +2750,8 @@ if __name__ == '__main__':
     if platform.system() == 'Linux':
         if not check_linux_privileges():
             print(colored("[-] Mira requires elevated privileges on Linux. QUITTING!", "red"))
-            exit()
+            time.sleep(8)
+            sys.exit()
         else:
             try:
                 clear_terminal()
@@ -2715,7 +2770,7 @@ if __name__ == '__main__':
                     clear_terminal()
                     print(colored(blehhh, "red"))
                     print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red")) 
-                    exit()
+                    sys.exit()
                 clear_terminal()
                 print(colored(wolf, "blue"))
                 while True:
@@ -2761,7 +2816,7 @@ if __name__ == '__main__':
                             clear_terminal()
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
-                            exit()
+                            sys.exit()
                         if os.path.exists(USER_DATA_FILE):
                             username = input(colored("[*] Username: ", "yellow"))
                             master_password = getpass.getpass(colored("[*] Master password: ", "yellow"))
@@ -2774,7 +2829,7 @@ if __name__ == '__main__':
                             clear_terminal()
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
-                            exit()
+                            sys.exit()
                         print(colored("[**] Available Commands:", "cyan"))
                         choices = ["- log: Login (Make sure you're registered before attempt to login)", "- regis: Register for new user (Only one user!)", "- quit: Terminate MIRA", 
                                    "- dec_mnemonic: Decode a mnemonic phrase", "- about: More information about MIRA"]
@@ -2785,19 +2840,26 @@ if __name__ == '__main__':
                             clear_terminal()
                             print(colored(blehhh, "red"))                                                                                                                
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
-                            exit()
+                            sys.exit()
                         mnemonic_phrase = input(colored("[*] Mnemonic Phrase: ", "yellow"))
+                        chosen_language = input(colored("[*] Language: ", "yellow"))
                         if not mnemonic_phrase:
                             print(colored("[-] No mnemomic phrase provided", "red"))
                             continue
                         try:
-                            mnemonic = Mnemonic("english")
+                            if not chosen_language:
+                                print(colored("[-] No language provided, default to English.", "red"))
+                                chosen_language = "english"
+                            mnemonic = Mnemonic(chosen_language)
                             key_bytes = mnemonic.to_entropy(mnemonic_phrase)
                             key_base64 = base64.b64encode(key_bytes).decode()                                                                                            
                             encryption_key = key_base64.replace('+', '-').replace('/', '_')
                             print(colored(f"[+] Encryption Key: {encryption_key}", "green"))
                         except ValueError:
-                            print(colored("[-] Insufficient number of words", "red"))
+                            print(colored("[-] Insufficient number of words or not the correct language.", "red"))
+                            continue
+                        except ConfigurationError as e:
+                            print(colored(f"[-] {e}", "red"))
                             continue
                     elif choice == 'quit':
                         print(colored("\n[-] Exiting Mira.....", "red"))
@@ -2824,7 +2886,8 @@ if __name__ == '__main__':
     elif platform.system() == 'Windows':
         if not check_windows_privileges():
             print(colored("[-] Mira requires elevated privileges on Windows. QUITTING!", "red"))
-            exit()
+            time.sleep(8)
+            sys.exit()
         else:
             try:
                 clear_terminal()
@@ -2843,7 +2906,7 @@ if __name__ == '__main__':
                     clear_terminal()
                     print(colored(blehhh, "red"))
                     print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
-                    exit()
+                    sys.exit()
                 clear_terminal()
                 print(colored(wolf, "blue"))
                 while True:
@@ -2889,7 +2952,7 @@ if __name__ == '__main__':
                             clear_terminal()
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
-                            exit()
+                            sys.exit()
                         if os.path.exists(USER_DATA_FILE):
                             username = input(colored("[*] Username: ", "yellow"))
                             master_password = getpass.getpass(colored("[*] Master password: ", "yellow"))
@@ -2903,7 +2966,7 @@ if __name__ == '__main__':
                             clear_terminal()
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
-                            exit()
+                            sys.exit()
                         print(colored("[**] Available Commands:", "cyan"))
                         choices = ["- log: Login (Make sure you're registered before attempt to login)", "- regis: Register for new user (Only one user!)", "- quit: Terminate MIRA", 
                                    "- dec_mnemonic: Decode a mnemonic phrase", "- about: More information about MIRA"]
@@ -2914,19 +2977,26 @@ if __name__ == '__main__':
                             clear_terminal()
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
-                            exit()
+                            sys.exit()
                         mnemonic_phrase = input(colored("[*] Mnemonic Phrase: ", "yellow"))
+                        chosen_language = input(colored("[*] Language: ", "yellow"))
                         if not mnemonic_phrase:
                             print(colored("[-] No mnemonic phrase provided!", "red"))
                             continue
                         try:
-                            mnemonic = Mnemonic("english")
+                            if not chosen_language:
+                                print(colored("[-] No language provided, default to English.", "red"))
+                                chosen_language = "english"
+                            mnemonic = Mnemonic(chosen_language)
                             key_bytes = mnemonic.to_entropy(mnemonic_phrase)
                             key_base64 = base64.b64encode(key_bytes).decode()
                             encryption_key = key_base64.replace('+', '-').replace('/', '_')
                             print(colored(f"[+] Encryption Key: {encryption_key}", "green"))
                         except ValueError:
-                            print(colored("[-] Insufficient number of words", "red"))
+                            print(colored("[-] Insufficient number of words or not the correct language.", "red"))
+                            continue
+                        except ConfigurationError as e:
+                            print(colored(f"[-] {e}", "red"))
                             continue
                     elif choice == 'quit':
                         print(colored("[-] Exiting Mira.....", "red"))
