@@ -289,7 +289,8 @@ class PasswordManager:
         if self.lockout_time and time.time() < self.lockout_time:
             print(colored(blehhh, "red"))
             print(colored(f"[-] Account locked. WE ALREADY TOLD YOU THAT WE DON'T ACCEPT BUGS HERE! If you are the real user, try again after {int(self.lockout_time - time.time())} seconds.", "red"))
-            exit()
+            time.sleep(8)
+            sys.exit()
             return False
         self.failed_login_attempts += 1
         if self.failed_login_attempts >= self.MAX_LOGIN_ATTEMPTS:
@@ -297,7 +298,8 @@ class PasswordManager:
             self.save_lockout_time()
             print(colored(blehhh, "red"))
             print(colored(f"[-] Too many failed attempts. ARE YOU TRYING TO BRUTEFORCE THIS? WE DON'T ACCEPT SHITTY BUGS HERE! Account locked for {self.LOCKOUT_DURATION_SECONDS} seconds.", "red"))
-            exit()
+            time.sleep(8)
+            sys.exit()
             return False
         return True
     def generate_password(self):
@@ -2745,6 +2747,8 @@ class PasswordManager:
     def logout(self):
         self.master_password = None
         self.cipher = None
+        print(colored("[*] Logging Out......", "yellow"))
+        time.sleep(4)
         print(colored("[+] Logged out!", "cyan"))
 if __name__ == '__main__':
     if platform.system() == 'Linux':
@@ -2769,7 +2773,8 @@ if __name__ == '__main__':
                 if password_manager.lockout_time and time.time() < password_manager.lockout_time:                                         
                     clear_terminal()
                     print(colored(blehhh, "red"))
-                    print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red")) 
+                    print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
+                    time.sleep(5)
                     sys.exit()
                 clear_terminal()
                 print(colored(wolf, "blue"))
@@ -2816,6 +2821,7 @@ if __name__ == '__main__':
                             clear_terminal()
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
+                            time.sleep(5)
                             sys.exit()
                         if os.path.exists(USER_DATA_FILE):
                             username = input(colored("[*] Username: ", "yellow"))
@@ -2829,6 +2835,7 @@ if __name__ == '__main__':
                             clear_terminal()
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
+                            time.sleep(5)
                             sys.exit()
                         print(colored("[**] Available Commands:", "cyan"))
                         choices = ["- log: Login (Make sure you're registered before attempt to login)", "- regis: Register for new user (Only one user!)", "- quit: Terminate MIRA", 
@@ -2840,6 +2847,7 @@ if __name__ == '__main__':
                             clear_terminal()
                             print(colored(blehhh, "red"))                                                                                                                
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
+                            time.sleep(5)
                             sys.exit()
                         mnemonic_phrase = input(colored("[*] Mnemonic Phrase: ", "yellow"))
                         chosen_language = input(colored("[*] Language: ", "yellow"))
@@ -2867,6 +2875,7 @@ if __name__ == '__main__':
                         clear_terminal()
                         print(colored(remember, "cyan"))
                         print(colored("Creating a password is like crafting a witty joke: it should be unique, memorable, and leave hackers scratching their heads. So, don't be shy to sprinkle a dash of humor into your password game – after all, laughter is the best encryption!", "cyan"))
+                        time.sleep(8)
                         sys.exit()
                     elif choice == 'about':
                         clear_terminal()
@@ -2882,6 +2891,7 @@ if __name__ == '__main__':
                 clear_terminal()
                 print(colored(remember, "cyan"))
                 print(colored("Creating a password is like crafting a witty joke: it should be unique, memorable, and leave hackers scratching their heads. So, don't be shy to sprinkle a dash of humor into your password game – after all, laughter is the best encryption!", "cyan"))
+                time.sleep(8)
                 sys.exit()
     elif platform.system() == 'Windows':
         if not check_windows_privileges():
@@ -2906,6 +2916,7 @@ if __name__ == '__main__':
                     clear_terminal()
                     print(colored(blehhh, "red"))
                     print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
+                    time.sleep(5)
                     sys.exit()
                 clear_terminal()
                 print(colored(wolf, "blue"))
@@ -2952,6 +2963,7 @@ if __name__ == '__main__':
                             clear_terminal()
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
+                            time.sleep(5)
                             sys.exit()
                         if os.path.exists(USER_DATA_FILE):
                             username = input(colored("[*] Username: ", "yellow"))
@@ -2966,6 +2978,7 @@ if __name__ == '__main__':
                             clear_terminal()
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
+                            time.sleep(5)
                             sys.exit()
                         print(colored("[**] Available Commands:", "cyan"))
                         choices = ["- log: Login (Make sure you're registered before attempt to login)", "- regis: Register for new user (Only one user!)", "- quit: Terminate MIRA", 
@@ -2977,6 +2990,7 @@ if __name__ == '__main__':
                             clear_terminal()
                             print(colored(blehhh, "red"))
                             print(colored(f"[-] Account locked. WE'VE ALREADY TOLD YOU THAT WE DON'T ACCEPT SHITTY BUGS HERE! If you are the real user, try again after {int(password_manager.lockout_time - time.time())} seconds.", "red"))
+                            time.sleep(5)
                             sys.exit()
                         mnemonic_phrase = input(colored("[*] Mnemonic Phrase: ", "yellow"))
                         chosen_language = input(colored("[*] Language: ", "yellow"))
@@ -3004,6 +3018,7 @@ if __name__ == '__main__':
                         clear_terminal()
                         print(colored(remember, "cyan"))
                         print(colored("Creating a password is like crafting a witty joke: it should be unique, memorable, and leave hackers scratching their heads. So, don't be shy to sprinkle a dash of humor into your password game – after all, laughter is the best encryption!", "cyan"))
+                        time.sleep(8)
                         sys.exit()
                     elif choice == 'about':
                         clear_terminal()
@@ -3019,5 +3034,6 @@ if __name__ == '__main__':
                 clear_terminal()
                 print(colored(remember, "cyan"))
                 print(colored("Creating a password is like crafting a witty joke: it should be unique, memorable, and leave hackers scratching their heads. So, don't be shy to sprinkle a dash of humor into your password game – after all, laughter is the best encryption!", "cyan"))
+                time.sleep(8)
                 sys.exit()
 
