@@ -125,23 +125,6 @@ MIRA supports various types of credentials, including:
     ```bash
     sudo MIRA
     ```
-    
-## Windows 
-
-1. **Clone the repository of MIRA (If Git is Installed)**:
-   ```bash
-   git clone https://github.com/veilwr4ith/MIRA
-   ```
-
-8. **Install Libraries**:
-   ```bash
-   python3 or py setup.py
-   ```
-
-9. **Once the installation has been successfully completed, you can now now use MIRA**:
-   ```bash
-   python3 or py MIRA.py
-   ```
 
 ## For Executable Version of MIRA
 
@@ -149,7 +132,7 @@ MIRA supports various types of credentials, including:
 
 
 
-*Make sure that when you're using Windows, run the installation and MIRA as administrator. As well as the executable file, run it as Administrator. (In Executable the Paste is not Ctrl+V, just click the Left Mouse Button Once to paste.)*
+*For executable file, run it as Administrator. (In Executable the Paste is not Ctrl+V, just click the Left Mouse Button Once to paste.)*
 
 ## Usage
 
