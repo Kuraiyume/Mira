@@ -4,6 +4,7 @@
 
 Mira is our innovative password management solution designed specifically for the command-line interface (CLI). With a streamlined and efficient approach, Mira provides a robust solution to the vulnerabilities associated with password management in the digital era.
 
+
 ## [+] Objectives
 
 - **Offline Security**: Mira prioritizes offline functionality to ensure password management without dependence on internet connectivity. This approach enhances security by minimizing the attack surface and reducing exposure to online threats.
@@ -21,6 +22,7 @@ Mira is our innovative password management solution designed specifically for th
 - **Security Best Practices**: The password manager encourages secure practices such as safeguarding master keys, enabling Two-Factor Authentication (2FA), and emphasizing password complexity to enhance overall security.
 
 - **Control**: Mira empowers users with complete control over their password manager, as it operates locally within the system and functions entirely offline. This provides users with a sense of independence and control over their sensitive information.
+
 
 ## [+] Why MIRA is Considered Secure?
 
@@ -48,6 +50,7 @@ Mira is our innovative password management solution designed specifically for th
 
    *Note: While offline password managers provide significant security benefits, users should remain vigilant about security best practices. It's crucial to store the master key and decryption key in a secure location on their device. Unfortunately, human error often poses the primary challenge in adhering to these practices.*
 
+
 ## [+] MIRA's Credential Storage Capabilities
 
 MIRA supports various types of credentials, including:
@@ -63,6 +66,7 @@ MIRA supports various types of credentials, including:
 - **Source Codes**: MIRA allows users to store and protect their project source codes securely. By providing encrypted storage for source code files, MIRA helps developers safeguard their intellectual property and sensitive project information, ensuring that their code remains confidential and protected from unauthorized access or tampering.
 
 - **Private Notes**: MIRA enables users to securely store private information, such as personal notes, sensitive documents, or confidential data. By encrypting these notes and providing secure storage, MIRA helps users safeguard their privacy and sensitive information, ensuring that it remains inaccessible to unauthorized individuals or malicious actors.
+
 
 ## [+] Features
 
@@ -109,6 +113,7 @@ MIRA supports various types of credentials, including:
 - [ ] Tested on macOS
 - [x] Tested on Linux
 
+
 ## [+] Installation for Unix-Based Systems (Coming soon)
 1. **Clone Repository**: Use Git to clone the Mira repository onto your system:
    ```bash
@@ -135,11 +140,13 @@ MIRA supports various types of credentials, including:
     sudo MIRA
     ```
 
+
 ## [+] For Executable Version of MIRA (Windows)
 
 - Click this link and Download: Coming soon
 
    *Note: For executable file, run it as Administrator. (In Executable the Paste is not Ctrl+V, just click the Left Mouse Button Once to paste.)*
+
 
 ## [+] Usage
 
@@ -147,6 +154,7 @@ To use Mira effectively:
 
 - Typing `h` or `help` in the Mira prompt provides guidance.
 - Before logging in, create a master user to secure the password vault.
+
 
 ## [+] Commands
 
@@ -205,13 +213,15 @@ Once logged in, users can utilize various commands, including:
 | `exit`                  | Terminate MIRA                                                                  |
 | `reset`                 | Delete all data, including the user account permanently (Be cautious!)         |
 
+
 ## [+] Security Recommendations
 
-- Regularly check for password expiration using the Listing and Analysis commands above.
-- Keep your master password and encryption key secure.
-- Enable Two-Factor Authentication for an additional layer of security.
-- Never copy your credentials when you retrieve it because sometimes you didn't change your clipboard and that is a privacy concern especially when you use clipboard for your sensitive informations like Passwords. That's why we have clipboard where MIRA will copy the retrieved/generated credentials and you have 30secs to paste it somewhere safe. It's a good idea to follow that feature for your own good.
-- Mira operates on a Zero-Knowledge basis, which means that the security of your account relies solely on the strength and secrecy of your master password, without any involvement from the service provider. So, it's essential not to compromise your account's security with careless actions. Don't be a bitch!
+- Regularly monitor password expiration using the Listing and Analysis commands provided.
+- Ensure your master password and encryption key are kept secure at all times.
+- Enable Two-Factor Authentication for an extra layer of protection.
+- Avoid copying your credentials directly from MIRA. Instead, utilize the clipboard feature provided. MIRA automatically copies retrieved/generated credentials to the clipboard, giving you 30 seconds to paste them securely. This helps prevent privacy concerns, especially when dealing with sensitive information like passwords. It's a good practice to utilize this feature for enhanced security.
+- MIRA operates on a Zero-Knowledge basis, meaning the security of your account depends solely on the strength and secrecy of your master password, without involvement from the service provider. Therefore, it's crucial not to compromise your account's security through careless actions. Stay vigilant!
+
 
 ## [+] Note
 
@@ -219,9 +229,11 @@ Once logged in, users can utilize various commands, including:
 - Password strength policy for platforms requires at least 10 characters with uppercase, numbers, and special characters also. (Optional, but we recommend you to follow our password policy.)
 - Japanese Language in Mnemonic Phrase can be faulty sometimes. Use it at your own risk.
   
+
 ## [+] License
 
-Mira is licensed under **GNU General Public License v3.0**
+Mira is licensed under **End-User License Agreement (EULA)**
+
 
 ## [+] Acknowledgements
 
