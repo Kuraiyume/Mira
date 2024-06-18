@@ -46,7 +46,7 @@ Mira is our innovative password management solution designed specifically for th
 
 - **No Connection Latency**: Users experience minimal latency since their password data is instantly accessible locally. This absence of network communication reduces the risk of delays or disruptions that might be exploited by attackers attempting to compromise the system.
 
-*While offline password managers provide significant security benefits, users should remain vigilant about security best practices. It's crucial to store the master key and decryption key in a secure location on their device. Unfortunately, human error often poses the primary challenge in adhering to these practices.*
+   *While offline password managers provide significant security benefits, users should remain vigilant about security best practices. It's crucial to store the master key and decryption key in a secure location on their device. Unfortunately, human error often poses the primary challenge in adhering to these practices.*
 
 ## [+] MIRA's Credential Storage Capabilities
 
@@ -100,7 +100,7 @@ MIRA supports various types of credentials, including:
 
 - **Reset Functionality**: Premium feature allowing users to reset MIRA instance, deleting all stored credentials including the primary MIRA account for comprehensive data management. 
 
-*Note: Resetting MIRA will permanently delete all stored credentials. Please ensure you have backed up essential data before proceeding, as this action cannot be undone.*
+   *Note: Resetting MIRA will permanently delete all stored credentials. Please ensure you have backed up essential data before proceeding, as this action cannot be undone.*
 
 
 ## [+] OS Compatibility
@@ -139,8 +139,7 @@ MIRA supports various types of credentials, including:
 
 - Click this link and Download: Coming soon
 
-
-*For executable file, run it as Administrator. (In Executable the Paste is not Ctrl+V, just click the Left Mouse Button Once to paste.)*
+   *For executable file, run it as Administrator. (In Executable the Paste is not Ctrl+V, just click the Left Mouse Button Once to paste.)*
 
 ## [+] Usage
 
