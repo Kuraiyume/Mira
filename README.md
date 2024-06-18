@@ -4,7 +4,7 @@
 
 Mira is our innovative password management solution designed specifically for the command-line interface (CLI). With a streamlined and efficient approach, Mira provides a robust solution to the vulnerabilities associated with password management in the digital era.
 
-## Objectives
+## [+] Objectives
 
 - **Offline Security**: Mira prioritizes offline functionality to ensure password management without dependence on internet connectivity. This approach enhances security by minimizing the attack surface and reducing exposure to online threats.
 
@@ -22,7 +22,7 @@ Mira is our innovative password management solution designed specifically for th
 
 - **Control**: Mira empowers users with complete control over their password manager, as it operates locally within the system and functions entirely offline. This provides users with a sense of independence and control over their sensitive information.
 
-## Why MIRA is Considered Secure?
+## [+] Why MIRA is Considered Secure?
 
 - **Limited Attack Surface**: Operating offline reduces the potential attack surface, minimizing vulnerabilities and enhancing overall security.
 
@@ -48,7 +48,7 @@ Mira is our innovative password management solution designed specifically for th
 
 *While offline password managers provide significant security benefits, users should remain vigilant about security best practices. It's crucial to store the master key and decryption key in a secure location on their device. Unfortunately, human error often poses the primary challenge in adhering to these practices.*
 
-## MIRA's Credential Storage Capabilities
+## [+] MIRA's Credential Storage Capabilities
 
 MIRA supports various types of credentials, including:
 
@@ -64,7 +64,7 @@ MIRA supports various types of credentials, including:
 
 - **Private Notes**: MIRA enables users to securely store private information, such as personal notes, sensitive documents, or confidential data. By encrypting these notes and providing secure storage, MIRA helps users safeguard their privacy and sensitive information, ensuring that it remains inaccessible to unauthorized individuals or malicious actors.
 
-## Features
+## [+] Features
 
 - **Versatile Credential Storage**: MIRA provides advanced storage capabilities for various types of credentials including Platform Accounts, Credit/Debit Card PINs, API Keys, SSH(RSA) Keys, Source Codes, and Private Notes. This wide range ensures MIRA can securely manage diverse credentials for users.
 
@@ -103,14 +103,13 @@ MIRA supports various types of credentials, including:
 *Note: Resetting MIRA will permanently delete all stored credentials. Please ensure you have backed up essential data before proceeding, as this action cannot be undone.*
 
 
-## OS Compatibility
+## [+] OS Compatibility
 
 - [x] Tested on Windows
 - [ ] Tested on macOS
 - [x] Tested on Linux
 
-## Installation
-## Unix-Based Systems
+## [+] Installation for Unix-Based Systems
 1. **Clone Repository**: Use Git to clone the Mira repository onto your system:
    ```bash
    git clone https://github.com/veilwr4ith/MIRA
@@ -136,7 +135,7 @@ MIRA supports various types of credentials, including:
     sudo MIRA
     ```
 
-## For Executable Version of MIRA
+## [+] For Executable Version of MIRA (Windows)
 
 - Click this link and Download: [here](https://www.mediafire.com/file/x1wigt7vj1w2ab5/MIRAInstaller.exe/file)
 
@@ -144,14 +143,14 @@ MIRA supports various types of credentials, including:
 
 *For executable file, run it as Administrator. (In Executable the Paste is not Ctrl+V, just click the Left Mouse Button Once to paste.)*
 
-## Usage
+## [+] Usage
 
 To use Mira effectively:
 
 - Typing `h` or `help` in the Mira prompt provides guidance.
 - Before logging in, create a master user to secure the password vault.
 
-## Commands
+## [+] Commands
 
 Once logged in, users can utilize various commands, including:
 
@@ -208,7 +207,7 @@ Once logged in, users can utilize various commands, including:
 | `exit`                  | Terminate MIRA                                                                  |
 | `reset`                 | Delete all data, including the user account permanently (Be cautious!)         |
 
-## Security Recommendations
+## [+] Security Recommendations
 
 - Regularly check for password expiration using the Listing and Analysis commands above.
 - Keep your master password and encryption key secure.
@@ -216,16 +215,17 @@ Once logged in, users can utilize various commands, including:
 - Never copy your credentials when you retrieve it because sometimes you didn't change your clipboard and that is a privacy concern especially when you use clipboard for your sensitive informations like Passwords. That's why we have clipboard where MIRA will copy the retrieved/generated credentials and you have 30secs to paste it somewhere safe. It's a good idea to follow that feature for your own good.
 - Mira operates on a Zero-Knowledge basis, which means that the security of your account relies solely on the strength and secrecy of your master password, without any involvement from the service provider. So, it's essential not to compromise your account's security with careless actions. Don't be a bitch!
 
-## Note
+## [+] Note
 
 - Master Password strength policy requires at least 15 characters with uppercase, numbers, and special characters. (Mandatory).
 - Password strength policy for platforms requires at least 10 characters with uppercase, numbers, and special characters also. (Optional, but we recommend you to follow our password policy.)
 - Japanese Language in Mnemonic Phrase can be faulty sometimes. Use it at your own risk.
-## License
+  
+## [+] License
 
 Mira is licensed under **GNU General Public License v3.0**
 
-## Acknowledgements
+## [+] Acknowledgements
 
 - veilwr4ith
 - icode3rror
