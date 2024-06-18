@@ -66,41 +66,41 @@ MIRA supports various types of credentials, including:
 
 ## Features
 
-- **Comprehensive Credential Storage**: MIRA offers sophisticated storage capabilities, accommodating an extensive range of credentials. These include Platform Accounts, Credit/Debit Card PINs, API Keys, SSH(RSA) Keys, Source Codes, and Private Notes. This breadth of storage options ensures MIRA's flexibility in securely managing diverse types of credentials for users.
+- **Versatile Credential Storage**: MIRA provides advanced storage capabilities for various types of credentials including Platform Accounts, Credit/Debit Card PINs, API Keys, SSH(RSA) Keys, Source Codes, and Private Notes. This wide range ensures MIRA can securely manage diverse credentials for users.
 
-- **Multi-Factor Authentication**: Before the user can go to the main menu of MIRA, the user needs to login first. In login prompt, the user needs to enter the master password and the encryption key that has been generated after successful registration and a time-based 6-digit from 2FA if enabled.
+- **Multi-Factor Authentication**: Secure your MIRA account with multi-factor authentication. Users need to enter the master password, encryption key generated during registration, and a time-based 6-digit code from 2FA if enabled, before accessing the main menu.
 
-- **Password Manager Lockout**: When the user failed to log 4 times, MIRA will lock itself within 5 minutes to prevent bruteforce attacks.
+- **Password Manager Lockout**: MIRA automatically locks after four failed login attempts, preventing brute force attacks for 5 minutes.
 
-- **Password Generator**: MIRA can generate a strong password in seconds with the right length and character requirements.
+- **Password Generator**: Quickly generate strong passwords with customizable length and character requirements.
 
-- **Clipboard Copy**: After you retrieve a credential or generate a password, MIRA will automatically copy it to the clipboard for 30secs.
+- **Clipboard Copy**: Automatically copies retrieved credentials or generated passwords to the clipboard for 30 seconds convenience.
 
-- **Secure Storage**: Credentials are encrypted using the Fernet symmetric encryption algorithm, ensuring data confidentiality and integrity. Without the encryption key, it will be almost impossible to retrieve or recover the data.
+- **Secure Storage**: Encrypts credentials using the Fernet symmetric encryption algorithm, ensuring data confidentiality and integrity.
 
-- **Carrier Lookup**: When you use a phone number for your platform credential instead of email, MIRA will detect its Carrier. This feature can help to validate the phone number that has been entered by the user.
+- **Carrier Lookup**: Detects the carrier when a phone number is used for platform credentials, aiding in phone number validation.
 
-- **Mnemonic Phrase**: Since the encryption key is generated in Base64 format, it's hard to memorize and maintain, that's why MIRA can turn the user's encryption key to a memorable and maintainable mnemonic phrase. 
+- **Mnemonic Phrase**: Convert encryption keys into memorable mnemonic phrases for easier recall.
 
-- **Password Strength Checker**: Ensures that passwords meet recommended strength criteria based on established password policies.
+- **Password Strength Checker**: Ensures passwords meet recommended strength criteria based on established policies.
 
-- **Password/PINs Expiry Notifications**: Users receive warnings when passwords are about to expire, prompting them to change passwords regularly for enhanced security.
+- **Password/PINs Expiry Notifications**: Receive warnings when passwords are about to expire for proactive security measures.
 
-- **Password Expiry Lister**: Allows users to view the remaining time until a password expires, facilitating proactive password management.
+- **Password Expiry Lister**: View remaining time until password expiry for effective password management.
 
-- **Accessible Instructions**: Prioritized creating intuitive guidance for MIRA, a Terminal-Based Password Manager, ensuring it offers the utmost user-friendliness.
+- **Accessible Instructions**: Prioritize intuitive guidance for MIRA, ensuring user-friendliness even in a Terminal-Based Password Manager.
 
-- **Enhanced User Data Encryption**: MIRA used nested encryption for the main user, ensuring that the Password Manager is safe and secure.
+- **Enhanced User Data Encryption**: Utilizes nested encryption for added security of user data.
 
-- **Loggings Tracker**: Mira can track login attempts, with the time logged and the status if the logging is successful or not, and the entered username.
+- **Loggings Tracker**: Tracks login attempts including time, status, and entered username.
 
-- **Configuration Loggings Tracker**: Mira can track the previous configurations that you've been done like adding, changing, deleting a credential.
+- **Configuration Loggings Tracker**: Tracks previous configurations such as adding, changing, or deleting credentials.
 
-- **Password Breach Monitoring**: Mira can scan your password if it exists in previous data breaches. (THIS FEATURE REQUIRES INTERNET CONNECTION)
-  
-- **Reset Functionality**: In the Premium Version, MIRA offers a reset option designed to provide users with a comprehensive tool for data management. By selecting this option, users can initiate a process that deletes all saved credentials, including their primary MIRA account. This feature serves as a safeguard, enabling users to reset their MIRA instance in situations such as compromised accounts or a need for a fresh start.
+- **Password Breach Monitoring**: Scan passwords against previous data breaches to ensure security. (REQUIRES INTERNET CONNECTION)
 
-*Please note: Resetting MIRA will permanently delete all stored credentials, and this action cannot be undone. Exercise caution and ensure that you have backed up any essential data before proceeding with the reset. MIRA will not be able to recover any deleted credentials after the reset is complete.*
+- **Reset Functionality**: Premium feature allowing users to reset MIRA instance, deleting all stored credentials including the primary MIRA account for comprehensive data management. 
+
+*Note: Resetting MIRA will permanently delete all stored credentials. Please ensure you have backed up essential data before proceeding, as this action cannot be undone.*
 
 
 ## OS Compatibility
