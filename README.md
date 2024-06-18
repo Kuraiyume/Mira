@@ -180,14 +180,17 @@ Once logged in, users can utilize various commands, including:
 | `genpasswd`             | Generate a strong password                                                     |
 | `changemaster`          | Change the masterkey                                                            |
 | **6. Listing and Analysis** |                                                                              |
-| `show_passwd_exp`       | List all usernames and their status on a specific platform or all              |
-| `show_pin_exp`          | List all card numbers and their status on a specific card type or all          |
-| `show_api_key`          | List all available API Key with their Key ID, Platform, Key Name, and Date      |
-| `show_ssh_key`          | List all available SSH Key with their Key ID, Username, Key Name, and Date     |
-| `show_src_code`         | List all available Source Code with their Code ID, File Name, and Date          |
-| `show_priv_note`        | List all available Private Note with their note ID, Title, and Date            |
-| `show_passwd_strength`  | List the strength of the password of a username on a specific platform         |
+| `show_passwd_exp`       | List the username and their status on a specific platform or all              |
+| `show_pin_exp`          | List the card number and their status on a specific card type or all          |
+| `show_api_key`          | List the available API Key with their Key ID, Platform, Key Name, and Date or all    |
+| `show_ssh_key`          | List the available SSH Key with their Key ID, Username, Key Name, and Date or all     |
+| `show_src_code`         | List the available Source Code with their Code ID, File Name, and Date or all          |
+| `show_priv_note`        | List the available Private Note with their note ID, Title, and Date or all            |
+| `show_passwd_strength`  | List the strength of the password of a username on a specific platform or all         |
+| `show_loggings`         | List all the previous login attempts                                            |
+| `show_config_loggings`    | List all the previous configurations that has been made                       |
 | **7. Securing Encryption Key** |                                                   |
+| `check_my_passwd_if_pwned` | Check if your password has been compromised in existing data breaches (Internet Connection Required!)  |
 | `mnemonic_enc_key`      | Convert the encryption key to a mnemonic phrase                                 |
 | `dec_mnemonic`          | Decode a mnemonic phrase to the original encryption key                         |
 | **8. User Actions**     |                                                                               |
