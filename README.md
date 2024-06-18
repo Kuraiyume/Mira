@@ -76,7 +76,7 @@ MIRA supports various types of credentials, including:
 
 - **Password Manager Lockout**: MIRA automatically locks after four failed login attempts, preventing brute force attacks for 5 minutes.
 
-- **Password Generator**: Quickly generate strong passwords with customizable length and character requirements.
+- **Password Generator**: Quickly generate strong passwords with enough length and character requirements.
 
 - **Clipboard Copy**: Automatically copies retrieved credentials or generated passwords to the clipboard for 30 seconds convenience.
 
