@@ -109,7 +109,7 @@ MIRA supports various types of credentials, including:
 - [ ] Tested on macOS
 - [x] Tested on Linux
 
-## [+] Installation for Unix-Based Systems
+## [+] Installation for Unix-Based Systems (Coming soon)
 1. **Clone Repository**: Use Git to clone the Mira repository onto your system:
    ```bash
    git clone https://github.com/veilwr4ith/MIRA
@@ -137,8 +137,7 @@ MIRA supports various types of credentials, including:
 
 ## [+] For Executable Version of MIRA (Windows)
 
-- Click this link and Download: [here](https://www.mediafire.com/file/x1wigt7vj1w2ab5/MIRAInstaller.exe/file)
-
+- Click this link and Download: Coming soon
 
 
 *For executable file, run it as Administrator. (In Executable the Paste is not Ctrl+V, just click the Left Mouse Button Once to paste.)*
