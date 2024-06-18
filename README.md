@@ -229,3 +229,4 @@ Mira is licensed under **GNU General Public License v3.0**
 
 - veilwr4ith
 - icode3rror
+- DappleFire (GIF)
