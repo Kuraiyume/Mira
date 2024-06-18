@@ -1,4 +1,4 @@
-![Example GIF](https://github.com/veilwr4ith/MIRA/blob/main/wolf.gif)
+![GIF](https://github.com/veilwr4ith/MIRA/blob/main/wolf.gif)
 
 # Mira Password Manager
 
@@ -70,7 +70,13 @@ MIRA supports various types of credentials, including:
 
 - **Multi-Factor Authentication**: Before the user can go to the main menu of MIRA, the user needs to login first. In login prompt, the user needs to enter the master password and the encryption key that has been generated after successful registration and a time-based 6-digit from 2FA if enabled.
 
-- **Secure Storage**: Passwords are encrypted using the Fernet symmetric encryption algorithm, ensuring data confidentiality and integrity. Without the encryption key, it will be almost impossible to retrieve or recover the content.
+- **Password Manager Lockout**: When the user failed to log 4 times, MIRA will lock itself within 5 minutes to prevent bruteforce attacks.
+
+- **Password Generator**: MIRA can generate a strong password in seconds with the right length and character requirements.
+
+- **Clipboard Copy**: After you retrieve a credential or generate a password, MIRA will automatically copy it to the clipboard for 30secs.
+
+- **Secure Storage**: Credentials are encrypted using the Fernet symmetric encryption algorithm, ensuring data confidentiality and integrity. Without the encryption key, it will be almost impossible to retrieve or recover the data.
 
 - **Carrier Lookup**: When you use a phone number for your platform credential instead of email, MIRA will detect its Carrier. This feature can help to validate the phone number that has been entered by the user.
 
@@ -80,15 +86,17 @@ MIRA supports various types of credentials, including:
 
 - **Password/PINs Expiry Notifications**: Users receive warnings when passwords are about to expire, prompting them to change passwords regularly for enhanced security.
 
-- **Password Generator**: Mira offers various password generation methods to create strong and unique passwords tailored to user preferences. (In pattrn option, **l** -lowercase **u** -uppercase **d** -digits **s** -symbols **a** -ascii+digits)
-
 - **Password Expiry Lister**: Allows users to view the remaining time until a password expires, facilitating proactive password management.
 
 - **Accessible Instructions**: Prioritized creating intuitive guidance for MIRA, a Terminal-Based Password Manager, ensuring it offers the utmost user-friendliness.
 
-- **Enhanced User Data Encryption**: Worked hard to make your password vault more secure by adding more complex encryptions in your main user in MIRA.
+- **Enhanced User Data Encryption**: MIRA used nested encryption for the main user, ensuring that the Password Manager is safe and secure.
 
 - **Loggings Tracker**: Mira can track login attempts, with the time logged and the status if the logging is successful or not, and the entered username.
+
+- **Configuration Loggings Tracker**: Mira can track the previous configurations that you've been done like adding, changing, deleting a credential.
+
+- **Password Breach Monitoring**: Mira can scan your password if it exists in previous data breaches. (THIS FEATURE REQUIRES INTERNET CONNECTION)
   
 - **Reset Functionality**: In the Premium Version, MIRA offers a reset option designed to provide users with a comprehensive tool for data management. By selecting this option, users can initiate a process that deletes all saved credentials, including their primary MIRA account. This feature serves as a safeguard, enabling users to reset their MIRA instance in situations such as compromised accounts or a need for a fresh start.
 
@@ -205,6 +213,7 @@ Once logged in, users can utilize various commands, including:
 - Regularly check for password expiration using the Listing and Analysis commands above.
 - Keep your master password and encryption key secure.
 - Enable Two-Factor Authentication for an additional layer of security.
+- Never copy your credentials when you retrieve it because sometimes you didn't change your clipboard and that is a privacy concern especially when you use clipboard for your sensitive informations like Passwords. That's why we have clipboard where MIRA will copy the retrieved/generated credentials and you have 30secs to paste it somewhere safe. It's a good idea to follow that feature for your own good.
 - Mira operates on a Zero-Knowledge basis, which means that the security of your account relies solely on the strength and secrecy of your master password, without any involvement from the service provider. So, it's essential not to compromise your account's security with careless actions. Don't be a bitch!
 
 ## Note
