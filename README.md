@@ -1,4 +1,4 @@
-![Example Image](https://github.com/veilwr4ith/MIRA/blob/main/448489994_1604133320427530_2160544919238906751_n.jpg)
+![Example Image]https://github.com/veilwr4ith/MIRA/blob/main/wolf.gif)
 
 # Mira Password Manager
 
