@@ -46,7 +46,7 @@ Mira is our innovative password management solution designed specifically for th
 
 - **No Connection Latency**: Users experience minimal latency since their password data is instantly accessible locally. This absence of network communication reduces the risk of delays or disruptions that might be exploited by attackers attempting to compromise the system.
 
-   *While offline password managers provide significant security benefits, users should remain vigilant about security best practices. It's crucial to store the master key and decryption key in a secure location on their device. Unfortunately, human error often poses the primary challenge in adhering to these practices.*
+   *Note: While offline password managers provide significant security benefits, users should remain vigilant about security best practices. It's crucial to store the master key and decryption key in a secure location on their device. Unfortunately, human error often poses the primary challenge in adhering to these practices.*
 
 ## [+] MIRA's Credential Storage Capabilities
 
@@ -139,7 +139,7 @@ MIRA supports various types of credentials, including:
 
 - Click this link and Download: Coming soon
 
-   *For executable file, run it as Administrator. (In Executable the Paste is not Ctrl+V, just click the Left Mouse Button Once to paste.)*
+   *Note: For executable file, run it as Administrator. (In Executable the Paste is not Ctrl+V, just click the Left Mouse Button Once to paste.)*
 
 ## [+] Usage
 
