@@ -100,7 +100,7 @@ MIRA supports various types of credentials, including:
 
 - **Password Breach Monitoring**: Scan passwords against previous data breaches to ensure security. (REQUIRES INTERNET CONNECTION)
 
-- **Reset Functionality**: Premium feature allowing users to reset MIRA instance, deleting all stored credentials including the primary MIRA account for comprehensive data management. 
+- **Reset Functionality**: This feature allowing users to reset MIRA instance, deleting all stored credentials including the primary MIRA account for comprehensive data management. 
 
    *Note: Resetting MIRA will permanently delete all stored credentials. Please ensure you have backed up essential data before proceeding, as this action cannot be undone.*
 
