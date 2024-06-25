@@ -113,37 +113,12 @@ MIRA supports various types of credentials, including:
 
 
 ## [+] Installation for Unix-Based Systems (Coming soon)
-1. **Clone Repository**: Use Git to clone the Mira repository onto your system:
-   ```bash
-   git clone https://github.com/veilwr4ith/MIRA
-   ```
-
-2. **Navigate to Directory**: Move into the Mira directory:
-   ```bash
-   cd MIRA
-   ```
-
-3. **Make the installer executable**:
-   ```bash
-   chmod +x installer.sh
-   ```
-
-4. **Run the installer**:
-   ```bash
-   sudo ./installer.sh
-   ```
-   
-5. **Verify Installation**: After installation, verify that Mira is successfully installed by running the program:
-    ```bash
-    sudo MIRA
-    ```
-
 
 ## [+] For Executable Version of MIRA (Windows)
 
-- Click this link and Download: Coming soon
+- Click this link and Download: (Payment First)
 
-   *Note: For executable file, run it as Administrator. (In Executable the Paste is not Ctrl+V, just click the Left Mouse Button Once to paste.)*
+   *Note: For executable file, run it as Administrator. (In Executable the Paste is not Ctrl+V, just click the Right Mouse Button Once to paste.)*
 
 
 ## [+] Usage
