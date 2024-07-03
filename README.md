@@ -105,6 +105,20 @@ MIRA supports various types of credentials, including:
    *Note: Resetting MIRA will permanently delete all stored credentials. Please ensure you have backed up essential data before proceeding, as this action cannot be undone.*
 
 
+## [+] Supported Card Brands by MIRA
+
+MIRA supports the following Card Brands for secure PIN identification:
+
+- Visa
+- Mastercard
+- American Express
+- Discover
+- JCB
+- Diners Club
+- Maestro
+- Verve
+
+
 ## [+] OS Compatibility
 
 - [x] Tested on Windows
