@@ -126,7 +126,17 @@ MIRA supports the following Card Brands for secure PIN identification:
 - [x] Tested on Linux
 
 
-## [+] Installation for Unix-Based Systems (Coming soon)
+## [+] Installation for Unix-Based Systems 
+
+- Download the executable: (Payment First)
+
+- Add an executable permission for MIRA
+
+```bash
+chmod +x MIRA
+```
+
+    
 
 ## [+] For Executable Version of MIRA (Windows)
 
