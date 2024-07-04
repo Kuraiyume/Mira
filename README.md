@@ -132,11 +132,16 @@ MIRA supports the following Card Brands for secure PIN identification:
 
 - Add an executable permission for MIRA
 
-```bash
-chmod +x MIRA
-```
+  ```bash
+  chmod +x MIRA
+  ```
 
-    
+- Launch MIRA (with elevated privileges, with sudo or root user)
+
+  ```bash
+  sudo ./MIRA
+  ```
+
 
 ## [+] For Executable Version of MIRA (Windows)
 
