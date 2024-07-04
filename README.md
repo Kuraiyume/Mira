@@ -57,7 +57,7 @@ MIRA supports various types of credentials, including:
 
 - **Account Passwords**: MIRA enables users to securely store and manage passwords for a variety of accounts, such as those used for websites, applications, and services. It employs encryption techniques to safeguard these passwords, preventing unauthorized access and ensuring user privacy and security online.
 
-- **Credit/Debit Card PINs**: MIRA provides a secure repository for storing sensitive financial information, including PINs for credit and debit cards. By encrypting this data and implementing robust security measures, MIRA ensures that users can safely store and access their card PINs, protecting them from unauthorized use and fraudulent activities.
+- **Credit/Debit/Prepaid Card PINs**: MIRA provides a secure repository for storing sensitive financial information, including PINs for credit and debit cards. By encrypting this data and implementing robust security measures, MIRA ensures that users can safely store and access their card PINs, protecting them from unauthorized use and fraudulent activities.
 
 - **API Keys**: MIRA offers a secure environment for storing API keys, which are authentication credentials used to access web services or APIs. By securely managing these keys, MIRA helps prevent unauthorized access to sensitive data and resources, enhancing the overall security of applications and systems that rely on API authentication.
 
