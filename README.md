@@ -90,7 +90,7 @@ MIRA supports various types of credentials, including:
 
 - **Password/PINs Expiry Notifications**: Receive warnings when passwords are about to expire for proactive security measures.
 
-- **Password Expiry Lister**: View remaining time until password expiry for effective password management.
+- **Password/PINs Expiry Lister**: View remaining time until password/pin expiry for effective password management.
 
 - **Accessible Instructions**: Prioritize intuitive guidance for MIRA, ensuring user-friendliness even in a Terminal-Based Password Manager.
 
