@@ -130,6 +130,12 @@ MIRA supports the following Card Brands for secure PIN identification:
 
 - Download the executable: (Payment First)
 
+- Install xclip
+
+  ```bash
+  sudo apt install xclip
+  ```
+
 - Add an executable permission for MIRA
 
   ```bash
