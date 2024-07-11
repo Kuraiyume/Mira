@@ -67,6 +67,8 @@ MIRA supports various types of credentials, including:
 
 - **Private Notes**: MIRA enables users to securely store private information, such as personal notes, sensitive documents, or confidential data. By encrypting these notes and providing secure storage, MIRA helps users safeguard their privacy and sensitive information, ensuring that it remains inaccessible to unauthorized individuals or malicious actors.
 
+- **Operating Systems Passwords**: MIRA enables users to securely store and manage passwords for a variety of Operating Systems, including Windows, macOS, Linux. This feature allows users to organize their OS-specific credentials in one central location, ensuring quick access and enhanced security.
+
 
 ## [+] Features
 
@@ -117,6 +119,15 @@ MIRA supports the following Card Brands for secure PIN identification:
 - Diners Club
 - Maestro
 - Verve
+
+
+## [+] Supported Password Types of Operating Systems by MIRA
+
+MIRA supports the following Password Types for secure OS Password Storage:
+
+- Phrase
+- PIN
+- Pattern (In Pattern you need to describe what the pattern looks like.)
 
 
 ## [+] OS Compatibility
