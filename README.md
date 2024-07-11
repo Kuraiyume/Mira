@@ -127,7 +127,9 @@ MIRA supports the following Password Types for secure OS Password Storage:
 
 - Phrase
 - PIN
-- Pattern (In Pattern you need to describe what the pattern looks like.)
+- Pattern
+
+*In Pattern you need to describe what the pattern looks like.*
 
 
 ## [+] OS Compatibility
