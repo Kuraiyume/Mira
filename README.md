@@ -190,6 +190,7 @@ Once logged in, users can utilize various commands, including:
 | `add_ssh_key`           | Add a new SSH Key                                                              |
 | `add_src_code`          | Add a new Source Code                                                          |
 | `add_priv_note`         | Add a new Private Note                                                         |
+| `add_os_passwd`         | Add a new Operating System password                                            |
 | **2. Retrieving Credentials** |                                                                          |
 | `get_platform_passwd`   | Retrieve the plaintext version of the password for the desired account ID     |
 | `get_api_key`           | Retrieve the plaintext version of the key of the desired account ID           |
@@ -197,6 +198,7 @@ Once logged in, users can utilize various commands, including:
 | `get_ssh_key`           | Retrieve the plaintext version of the SSH Key for the desired key ID          |
 | `get_src_code`          | Retrieve the plaintext version of the Source Code for the desired code ID     |
 | `get_priv_note`         | Retrieve the plaintext version of the Private Note for the desired note ID    |
+| `get_os_passwd`         | Retrieve the plaintext version of the Operating System Password for the desired OS ID    |
 | **3. Deleting Credentials** |                                                                           |
 | `del_platform_passwd`   | Delete a saved password according to your desired account ID                  |
 | `del_api_key`           | Delete key according to your desired account ID                                |
@@ -204,13 +206,15 @@ Once logged in, users can utilize various commands, including:
 | `del_ssh_key`           | Delete a saved SSH Key according to your desired key ID                        |
 | `del_src_code`          | Delete a saved Source Code according to your desired code ID                  |
 | `del_priv_note`         | Delete a saved Private Note according to your desired note ID                 |
+| `del_os_passwd`         | Delete a saved Operating System Password according to your desired OS ID      |
 | **4. Changing Credentials** |                                                                          |
 | `ch_platform_pass`      | Change the password for the desired account ID                                 |
 | `ch_card_pin`           | Change the password for the desired pin ID                                     |
 | `ch_api_key`            | Change the API Key for the desired account ID                                  |
 | `ch_ssh_key`            | Change the SSH Key for the desired key ID                                      |
 | `ch_src_code`           | Change the Source Code for the desired code ID                                 |
-| `upd_priv_note`         | Update the Private Note based on note ID                                       |
+| `ch_priv_note`         | Update the Private Note based on note ID                                       |
+| `ch_os_passwd`          | Chane the Operatin System Password for the desried OS ID                        |
 | **5. Security and Configuration** |                                                                        |
 | `enable2fa`             | Enable Two-Factor Authentication for added security                            |
 | `genpasswd`             | Generate a strong password                                                     |
@@ -222,6 +226,7 @@ Once logged in, users can utilize various commands, including:
 | `show_ssh_key`          | List the available SSH Key with their Key ID, Username, Key Name, and Date or all     |
 | `show_src_code`         | List the available Source Code with their Code ID, File Name, and Date or all          |
 | `show_priv_note`        | List the available Private Note with their note ID, Title, and Date or all            |
+| `show_os_passwd`        | List the available Operating System with their OS ID, Password Type, and Date or all  |
 | `show_passwd_strength`  | List the strength of the password of a username on a specific platform or all         |
 | `show_loggings`         | List all the previous login attempts                                            |
 | `show_config_loggings`    | List all the previous configurations that has been made                       |
