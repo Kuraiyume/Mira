@@ -164,7 +164,7 @@ MIRA supports the following Password Types for secure OS Password Storage:
 
 ## [+] For Executable Version of MIRA (Windows)
 
-- Click this link and Download: [here](https://www.mediafire.com/file/x1wigt7vj1w2ab5/MIRAInstaller.exe/file)
+- Click this link and Download: (Payment first)
 
    *Note: For executable file, run it as Administrator. (In Executable the Paste is not Ctrl+V, just click the Right Mouse Button Once to paste.)*
 
