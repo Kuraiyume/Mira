@@ -141,7 +141,7 @@ MIRA supports the following Password Types for secure OS Password Storage:
 
 ## [+] Installation for Unix-Based Systems 
 
-- Download the executable: (Coming Soon)
+- Download the executable: [here](https://www.mediafire.com/file/jmgvmir2tnoqdtx/MIRA/file)
 
 - Install xclip
 
