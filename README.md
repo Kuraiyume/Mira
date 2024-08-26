@@ -263,5 +263,5 @@ Mira is licensed under **End-User License Agreement (EULA)**
 
 ## [+] Acknowledgements
 
-- veilwr4ith
+- Zephyr
 - DappleFire (GIF)
